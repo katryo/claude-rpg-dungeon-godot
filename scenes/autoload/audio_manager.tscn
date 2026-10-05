@@ -1,0 +1,83 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/autoload/audio_manager.gd" id="1_5l2qm"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/buff.wav" id="2_8rjfj"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/buzz.wav" id="3_k3wwg"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/cancel.wav" id="4_n6y1u"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/chest.wav" id="5_5vmmf"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/confirm.wav" id="6_t2w81"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/crit.wav" id="7_4snii"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/cursor.wav" id="8_lq213"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/dark.wav" id="9_0mlsi"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/death.wav" id="10_2ml5i"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/encounter.wav" id="11_gcj8c"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/heal.wav" id="12_snx7y"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/hit.wav" id="13_p62wp"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/levelup.wav" id="14_jixr5"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/magic.wav" id="15_wkplh"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/save.wav" id="16_8w7cp"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/slash.wav" id="17_jv23f"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/step.wav" id="18_yurmx"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/battle.ogg" id="19_83f3h"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/boss.ogg" id="20_vdjer"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/castle.ogg" id="21_4jobu"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/title.ogg" id="22_4tt3a"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/victory.ogg" id="23_c6qwd"]
+
+[node name="Audio" type="Node" unique_id=1412223663]
+script = ExtResource("1_5l2qm")
+sounds = Dictionary[StringName, AudioStream]({
+&"buff": ExtResource("2_8rjfj"),
+&"buzz": ExtResource("3_k3wwg"),
+&"cancel": ExtResource("4_n6y1u"),
+&"chest": ExtResource("5_5vmmf"),
+&"confirm": ExtResource("6_t2w81"),
+&"crit": ExtResource("7_4snii"),
+&"cursor": ExtResource("8_lq213"),
+&"dark": ExtResource("9_0mlsi"),
+&"death": ExtResource("10_2ml5i"),
+&"encounter": ExtResource("11_gcj8c"),
+&"heal": ExtResource("12_snx7y"),
+&"hit": ExtResource("13_p62wp"),
+&"levelup": ExtResource("14_jixr5"),
+&"magic": ExtResource("15_wkplh"),
+&"save": ExtResource("16_8w7cp"),
+&"slash": ExtResource("17_jv23f"),
+&"step": ExtResource("18_yurmx")
+})
+music = Dictionary[StringName, AudioStream]({
+&"battle": ExtResource("19_83f3h"),
+&"boss": ExtResource("20_vdjer"),
+&"castle": ExtResource("21_4jobu"),
+&"title": ExtResource("22_4tt3a"),
+&"victory": ExtResource("23_c6qwd")
+})
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="." unique_id=183132593]
+bus = &"Music"
+
+[node name="SfxPlayers" type="Node" parent="." unique_id=1278802150]
+
+[node name="Sfx0" type="AudioStreamPlayer" parent="SfxPlayers" unique_id=835361592]
+bus = &"SFX"
+
+[node name="Sfx1" type="AudioStreamPlayer" parent="SfxPlayers" unique_id=844528679]
+bus = &"SFX"
+
+[node name="Sfx2" type="AudioStreamPlayer" parent="SfxPlayers" unique_id=359586746]
+bus = &"SFX"
+
+[node name="Sfx3" type="AudioStreamPlayer" parent="SfxPlayers" unique_id=244265212]
+bus = &"SFX"
+
+[node name="Sfx4" type="AudioStreamPlayer" parent="SfxPlayers" unique_id=1062738631]
+bus = &"SFX"
+
+[node name="Sfx5" type="AudioStreamPlayer" parent="SfxPlayers" unique_id=867581383]
+bus = &"SFX"
+
+[node name="Sfx6" type="AudioStreamPlayer" parent="SfxPlayers" unique_id=507322137]
+bus = &"SFX"
+
+[node name="Sfx7" type="AudioStreamPlayer" parent="SfxPlayers" unique_id=1389461132]
+bus = &"SFX"

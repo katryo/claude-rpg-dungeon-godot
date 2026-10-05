@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_x3egn"]
+[ext_resource type="Resource" path="res://data/heroes/arlen.tres" id="2_622xr"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_2qmj7"]
+
+[resource]
+script = ExtResource("3_2qmj7")
+display_name = "Aegis Cuirass"
+description = "Bears the visage of a gorgon. Foes hesitate."
+slot = 2
+allowed_heroes = Array[ExtResource("1_x3egn")]([ExtResource("2_622xr")])
+hp = 40
+def = 22
+mdf = 10

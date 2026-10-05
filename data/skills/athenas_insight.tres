@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="1_haw8j"]
+[ext_resource type="Script" path="res://scripts/resources/skill_data.gd" id="2_6hmro"]
+
+[sub_resource type="Resource" id="Resource_dc8uo"]
+script = ExtResource("1_haw8j")
+stat = "mag"
+multiplier = 1.5
+
+[resource]
+script = ExtResource("2_6hmro")
+display_name = "Athena's Insight"
+description = "Clears the mind, raising Theia's Magic for 3 turns."
+mp_cost = 5
+kind = 4
+element = 7
+power = 0.0
+target = 4
+buffs = Array[ExtResource("1_haw8j")]([SubResource("Resource_dc8uo")])

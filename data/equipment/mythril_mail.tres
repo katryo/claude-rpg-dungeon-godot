@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_1je1p"]
+[ext_resource type="Resource" path="res://data/heroes/arlen.tres" id="2_upfq5"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_dci0q"]
+
+[resource]
+script = ExtResource("3_dci0q")
+display_name = "Mythril Mail"
+description = "Fine chain mail of mythril links."
+slot = 2
+allowed_heroes = Array[ExtResource("1_1je1p")]([ExtResource("2_upfq5")])
+def = 10
+mdf = 4

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_6yyhf"]
+[ext_resource type="Resource" path="res://data/heroes/theia.tres" id="2_co7vk"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_l4wlc"]
+
+[resource]
+script = ExtResource("3_l4wlc")
+display_name = "Laurel Wreath"
+description = "Woven from the laurels of Delphi."
+slot = 1
+allowed_heroes = Array[ExtResource("1_6yyhf")]([ExtResource("2_co7vk")])
+mag = 4
+mdf = 6

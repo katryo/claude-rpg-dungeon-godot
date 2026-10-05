@@ -1,0 +1,82 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/dark_lord.png" id="1_tkpdt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phcda"]
+atlas = ExtResource("1_tkpdt")
+region = Rect2(108, 0, 54, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_75tf3"]
+atlas = ExtResource("1_tkpdt")
+region = Rect2(162, 0, 54, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3yilb"]
+atlas = ExtResource("1_tkpdt")
+region = Rect2(216, 0, 54, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x3hgl"]
+atlas = ExtResource("1_tkpdt")
+region = Rect2(270, 0, 54, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ijwp"]
+atlas = ExtResource("1_tkpdt")
+region = Rect2(324, 0, 54, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i1bcd"]
+atlas = ExtResource("1_tkpdt")
+region = Rect2(378, 0, 54, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ghr88"]
+atlas = ExtResource("1_tkpdt")
+region = Rect2(0, 0, 54, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qvtku"]
+atlas = ExtResource("1_tkpdt")
+region = Rect2(54, 0, 54, 54)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phcda")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_75tf3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3yilb")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x3hgl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ijwp")
+}],
+"loop": false,
+"name": &"cast",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i1bcd")
+}],
+"loop": false,
+"name": &"hurt",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ghr88")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qvtku")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.5
+}]

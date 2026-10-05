@@ -1,0 +1,62 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/fx/one_shot_fx.gd" id="1_7a72r"]
+[ext_resource type="Material" path="res://resources/materials/holy_light.tres" id="2_l7bko"]
+[ext_resource type="Script" path="res://scripts/fx/flash_light.gd" id="3_a5u0y"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1r56h"]
+top_radius = 0.8
+bottom_radius = 0.8
+height = 10.0
+radial_segments = 16
+
+[sub_resource type="Animation" id="Animation_4i5us"]
+length = 0.9
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Pillar:transparency")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.6, 0.9),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [1.0, 0.2, 0.2, 1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Pillar:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(1.4, 1, 1.4), Vector3(0.4, 1, 0.4)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xv1y1"]
+_data = {
+&"play": SubResource("Animation_4i5us")
+}
+
+[node name="HolyPillar" type="Node3D" unique_id=498663212]
+script = ExtResource("1_7a72r")
+lifetime = 1.0
+
+[node name="Pillar" type="MeshInstance3D" parent="." unique_id=283856758]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+material_override = ExtResource("2_l7bko")
+transparency = 1.0
+mesh = SubResource("CylinderMesh_1r56h")
+
+[node name="Flash" type="OmniLight3D" parent="." unique_id=845764404]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+omni_range = 6.0
+script = ExtResource("3_a5u0y")
+peak_energy = 6.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=555075647]
+libraries/ = SubResource("AnimationLibrary_xv1y1")

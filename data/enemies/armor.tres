@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_action.gd" id="1_0cfcq"]
+[ext_resource type="Resource" path="res://data/skills/attack.tres" id="2_btm1m"]
+[ext_resource type="Resource" path="res://data/skills/cleave.tres" id="3_mtb4a"]
+[ext_resource type="Script" path="res://scripts/resources/enemy_data.gd" id="4_l8tc3"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/armor.tres" id="5_jjx4j"]
+
+[sub_resource type="Resource" id="Resource_n3v6h"]
+script = ExtResource("1_0cfcq")
+skill = ExtResource("2_btm1m")
+weight = 6
+
+[sub_resource type="Resource" id="Resource_kq8kg"]
+script = ExtResource("1_0cfcq")
+skill = ExtResource("3_mtb4a")
+weight = 3
+
+[resource]
+script = ExtResource("4_l8tc3")
+display_name = "Living Armor"
+sprite_frames = ExtResource("5_jjx4j")
+sprite_scale = 1.15
+hp = 300
+atk = 40
+def = 36
+mag = 5
+spd = 7
+exp_reward = 72
+gold_reward = 40
+weaknesses = 4
+actions = Array[ExtResource("1_0cfcq")]([SubResource("Resource_n3v6h"), SubResource("Resource_kq8kg")])

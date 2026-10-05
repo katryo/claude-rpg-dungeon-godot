@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_dv11t"]
+[ext_resource type="Resource" path="res://data/heroes/arlen.tres" id="2_x6a6b"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_wa8x8"]
+
+[resource]
+script = ExtResource("3_wa8x8")
+display_name = "Leather Band"
+description = "A simple headband. Keeps the hair out of your eyes."
+slot = 1
+allowed_heroes = Array[ExtResource("1_dv11t")]([ExtResource("2_x6a6b")])
+def = 3

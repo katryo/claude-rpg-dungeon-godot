@@ -1,0 +1,48 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/fx/one_shot_fx.gd" id="1_svque"]
+[ext_resource type="Material" path="res://resources/materials/spark_particle.tres" id="2_hlxjc"]
+[ext_resource type="Script" path="res://scripts/fx/flash_light.gd" id="3_ro4od"]
+
+[sub_resource type="Gradient" id="Gradient_bmnkq"]
+colors = PackedColorArray(2, 2, 2, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_x2vqu"]
+gradient = SubResource("Gradient_bmnkq")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8argu"]
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 0.1
+emission_ring_radius = 0.7
+emission_ring_inner_radius = 0.5
+emission_ring_cone_angle = 90.0
+direction = Vector3(0, 1, 0)
+spread = 5.0
+initial_velocity_min = 1.5
+initial_velocity_max = 2.5
+gravity = Vector3(0, 0, 0)
+color_ramp = SubResource("GradientTexture1D_x2vqu")
+
+[sub_resource type="QuadMesh" id="QuadMesh_68djh"]
+size = Vector2(0.18, 0.18)
+
+[node name="Rise" type="Node3D" unique_id=242248551]
+script = ExtResource("1_svque")
+lifetime = 1.6
+
+[node name="Particles" type="GPUParticles3D" parent="." unique_id=1795396974]
+material_override = ExtResource("2_hlxjc")
+emitting = false
+amount = 24
+one_shot = true
+explosiveness = 0.3
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_8argu")
+draw_pass_1 = SubResource("QuadMesh_68djh")
+
+[node name="Flash" type="OmniLight3D" parent="." unique_id=790697995]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+omni_range = 6.0
+script = ExtResource("3_ro4od")
+peak_energy = 2.5

@@ -1,0 +1,82 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/armor.png" id="1_tt8ae"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v2ox8"]
+atlas = ExtResource("1_tt8ae")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bgvp1"]
+atlas = ExtResource("1_tt8ae")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i5aiv"]
+atlas = ExtResource("1_tt8ae")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5c5ix"]
+atlas = ExtResource("1_tt8ae")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jaehy"]
+atlas = ExtResource("1_tt8ae")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6yck2"]
+atlas = ExtResource("1_tt8ae")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yrt4u"]
+atlas = ExtResource("1_tt8ae")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yl6pi"]
+atlas = ExtResource("1_tt8ae")
+region = Rect2(32, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v2ox8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bgvp1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i5aiv")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5c5ix")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jaehy")
+}],
+"loop": false,
+"name": &"cast",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6yck2")
+}],
+"loop": false,
+"name": &"hurt",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yrt4u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yl6pi")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.5
+}]

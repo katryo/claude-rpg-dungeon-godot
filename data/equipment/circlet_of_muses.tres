@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_6vplr"]
+[ext_resource type="Resource" path="res://data/heroes/theia.tres" id="2_1sq2g"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_2xc2c"]
+
+[resource]
+script = ExtResource("3_2xc2c")
+display_name = "Circlet of Muses"
+description = "Blessed by the nine Muses."
+slot = 1
+allowed_heroes = Array[ExtResource("1_6vplr")]([ExtResource("2_1sq2g")])
+mp = 15
+mag = 10
+mdf = 12

@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[node name="SelectRow" type="HBoxContainer" unique_id=474410621]
+custom_minimum_size = Vector2(0, 34)
+mouse_filter = 0
+
+[node name="Cursor" type="Label" parent="." unique_id=1570082540]
+custom_minimum_size = Vector2(22, 0)
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+
+[node name="Text" type="Label" parent="." unique_id=1645048918]
+layout_mode = 2
+size_flags_horizontal = 3
+clip_text = true
+
+[node name="Right" type="Label" parent="." unique_id=1683520722]
+layout_mode = 2
+horizontal_alignment = 2

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_314tx"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="2_i81w8"]
+
+[resource]
+script = ExtResource("2_i81w8")
+display_name = "Hermes' Sandals"
+description = "Winged sandals of the messenger god."
+slot = 3
+spd = 10

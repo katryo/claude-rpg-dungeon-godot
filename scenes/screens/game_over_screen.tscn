@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/screens/game_over_screen.gd" id="1_jr7lj"]
+[ext_resource type="Script" path="res://scripts/ui/select_list.gd" id="2_alvey"]
+
+[node name="GameOverScreen" type="CanvasLayer" unique_id=821735302]
+layer = 40
+script = ExtResource("1_jr7lj")
+
+[node name="Root" type="Control" parent="." unique_id=2097785678]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Background" type="ColorRect" parent="Root" unique_id=264839838]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.03, 0, 0.02, 1)
+
+[node name="Message" type="Label" parent="Root" unique_id=486237777]
+layout_mode = 0
+anchor_right = 1.0
+offset_top = 220.0
+theme_override_font_sizes/font_size = 48
+theme_override_colors/font_color = Color(0.85, 0.2, 0.3, 1)
+text = "The party has fallen..."
+horizontal_alignment = 1
+
+[node name="ChoicePanel" type="PanelContainer" parent="Root" unique_id=405781873]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 0
+offset_left = 480.0
+offset_top = 380.0
+offset_right = 800.0
+offset_bottom = 408.0
+
+[node name="ChoiceList" type="VBoxContainer" parent="Root/ChoicePanel" unique_id=1518391840]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("2_alvey")
+allow_cancel = false

@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/field/follower.gd" id="1_hvc6v"]
+[ext_resource type="PackedScene" path="res://scenes/common/character_sprite.tscn" id="2_cn6xv"]
+[ext_resource type="Script" path="res://scripts/common/character_sprite.gd" id="3_5ehgc"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/garrick.tres" id="4_yjw6v"]
+
+[node name="Follower" type="Node3D" unique_id=1946130737]
+script = ExtResource("1_hvc6v")
+
+[node name="Visual" type="Node3D" parent="." unique_id=1573082034 instance=ExtResource("2_cn6xv")]
+script = ExtResource("3_5ehgc")
+sprite_frames = ExtResource("4_yjw6v")

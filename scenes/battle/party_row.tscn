@@ -1,0 +1,65 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/party_row.gd" id="1_u83qx"]
+[ext_resource type="Script" path="res://scripts/ui/stat_bar.gd" id="2_046ev"]
+
+[node name="PartyRow" type="HBoxContainer" unique_id=1832993356]
+custom_minimum_size = Vector2(0, 46)
+theme_override_constants/separation = 14
+script = ExtResource("1_u83qx")
+
+[node name="Cursor" type="Label" parent="." unique_id=858011321]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(18, 0)
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+
+[node name="NameLabel" type="Label" parent="." unique_id=766084135]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Hero"
+
+[node name="HPBox" type="VBoxContainer" parent="." unique_id=894181751]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="HPLabel" type="Label" parent="HPBox" unique_id=1284114960]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "HP 0/0"
+
+[node name="HPBar" type="Control" parent="HPBox" unique_id=549357379]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 8)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_046ev")
+color = Color(0.4, 0.95, 0.5, 1)
+
+[node name="MPBox" type="VBoxContainer" parent="." unique_id=992821449]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="MPLabel" type="Label" parent="MPBox" unique_id=996704684]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "MP 0/0"
+
+[node name="MPBar" type="Control" parent="MPBox" unique_id=2097432085]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 8)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_046ev")
+color = Color(0.45, 0.7, 1, 1)
+
+[node name="StatusLabel" type="Label" parent="." unique_id=1125881531]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15

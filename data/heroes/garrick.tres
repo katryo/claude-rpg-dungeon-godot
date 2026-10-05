@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="HeroData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/learnable_skill.gd" id="1_bl0xk"]
+[ext_resource type="Resource" path="res://data/skills/shield_bash.tres" id="2_7dkdn"]
+[ext_resource type="Resource" path="res://data/skills/provoke.tres" id="3_8hgj2"]
+[ext_resource type="Resource" path="res://data/skills/iron_wall.tres" id="4_2jsfj"]
+[ext_resource type="Resource" path="res://data/skills/war_cry.tres" id="5_yffmi"]
+[ext_resource type="Resource" path="res://data/skills/earthsplitter.tres" id="6_0cayk"]
+[ext_resource type="Texture2D" path="res://assets/sprites/portraits/garrick.png" id="7_ih725"]
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="8_tvr07"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/garrick.tres" id="9_plgxq"]
+
+[sub_resource type="Resource" id="Resource_cald5"]
+script = ExtResource("1_bl0xk")
+skill = ExtResource("2_7dkdn")
+
+[sub_resource type="Resource" id="Resource_nux53"]
+script = ExtResource("1_bl0xk")
+skill = ExtResource("3_8hgj2")
+
+[sub_resource type="Resource" id="Resource_eyrr2"]
+script = ExtResource("1_bl0xk")
+level = 5
+skill = ExtResource("4_2jsfj")
+
+[sub_resource type="Resource" id="Resource_2a7r1"]
+script = ExtResource("1_bl0xk")
+level = 7
+skill = ExtResource("5_yffmi")
+
+[sub_resource type="Resource" id="Resource_fqt24"]
+script = ExtResource("1_bl0xk")
+level = 9
+skill = ExtResource("6_0cayk")
+
+[resource]
+script = ExtResource("8_tvr07")
+display_name = "Garrick"
+job = "Armored Warrior"
+bio = "Arlen's sworn shield and oldest friend. Clad in heavy plate, he stands between his companions and every blow."
+sprite_frames = ExtResource("9_plgxq")
+portrait = ExtResource("7_ih725")
+base_hp = 160
+base_mp = 12
+base_atk = 22
+base_def = 22
+base_mag = 6
+base_spd = 9
+growth_hp = 24.0
+growth_atk = 3.0
+growth_def = 3.0
+growth_mag = 0.8
+growth_mdf = 1.5
+learnset = Array[ExtResource("1_bl0xk")]([SubResource("Resource_cald5"), SubResource("Resource_nux53"), SubResource("Resource_eyrr2"), SubResource("Resource_2a7r1"), SubResource("Resource_fqt24")])

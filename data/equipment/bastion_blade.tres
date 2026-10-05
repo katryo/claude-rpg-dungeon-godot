@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_ca0kp"]
+[ext_resource type="Resource" path="res://data/heroes/garrick.tres" id="2_yerko"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_tjv7p"]
+
+[resource]
+script = ExtResource("3_tjv7p")
+display_name = "Bastion Blade"
+description = "Heavy as a castle gate, and as unyielding."
+allowed_heroes = Array[ExtResource("1_ca0kp")]([ExtResource("2_yerko")])
+atk = 28
+def = 6

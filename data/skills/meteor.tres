@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="1_evmdf"]
+[ext_resource type="Script" path="res://scripts/resources/skill_data.gd" id="2_tjm3m"]
+
+[resource]
+script = ExtResource("2_tjm3m")
+display_name = "Meteor"
+description = "Rains fragments of falling stars upon all foes."
+mp_cost = 24
+kind = 1
+power = 1.6
+target = 1

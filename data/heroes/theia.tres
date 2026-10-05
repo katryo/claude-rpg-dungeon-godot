@@ -1,0 +1,73 @@
+[gd_resource type="Resource" script_class="HeroData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/learnable_skill.gd" id="1_sb1lw"]
+[ext_resource type="Resource" path="res://data/skills/fira.tres" id="2_jh4pl"]
+[ext_resource type="Resource" path="res://data/skills/blizzara.tres" id="3_bhvy6"]
+[ext_resource type="Resource" path="res://data/skills/thundara.tres" id="4_7hh46"]
+[ext_resource type="Resource" path="res://data/skills/asclepius_grace.tres" id="5_0qsjh"]
+[ext_resource type="Resource" path="res://data/skills/anastasis.tres" id="6_ow5tl"]
+[ext_resource type="Resource" path="res://data/skills/athenas_insight.tres" id="7_bsnnm"]
+[ext_resource type="Resource" path="res://data/skills/meteor.tres" id="8_svwks"]
+[ext_resource type="Resource" path="res://data/skills/holy.tres" id="9_00kot"]
+[ext_resource type="Texture2D" path="res://assets/sprites/portraits/theia.png" id="10_nqmx0"]
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="11_ycvo8"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/theia.tres" id="12_3aq4n"]
+
+[sub_resource type="Resource" id="Resource_d13tt"]
+script = ExtResource("1_sb1lw")
+skill = ExtResource("2_jh4pl")
+
+[sub_resource type="Resource" id="Resource_7dmg7"]
+script = ExtResource("1_sb1lw")
+skill = ExtResource("3_bhvy6")
+
+[sub_resource type="Resource" id="Resource_bwhy1"]
+script = ExtResource("1_sb1lw")
+skill = ExtResource("4_7hh46")
+
+[sub_resource type="Resource" id="Resource_fs7p6"]
+script = ExtResource("1_sb1lw")
+skill = ExtResource("5_0qsjh")
+
+[sub_resource type="Resource" id="Resource_agv5l"]
+script = ExtResource("1_sb1lw")
+level = 5
+skill = ExtResource("6_ow5tl")
+
+[sub_resource type="Resource" id="Resource_d03l4"]
+script = ExtResource("1_sb1lw")
+level = 5
+skill = ExtResource("7_bsnnm")
+
+[sub_resource type="Resource" id="Resource_3fajd"]
+script = ExtResource("1_sb1lw")
+level = 8
+skill = ExtResource("8_svwks")
+
+[sub_resource type="Resource" id="Resource_3iv25"]
+script = ExtResource("1_sb1lw")
+level = 10
+skill = ExtResource("9_00kot")
+
+[resource]
+script = ExtResource("11_ycvo8")
+display_name = "Theia"
+job = "Arch Mage"
+bio = "Oracle-born arch mage of the Delphic Order, robed in the chiton of the old gods. Her wand channels starfire itself."
+sprite_frames = ExtResource("12_3aq4n")
+portrait = ExtResource("10_nqmx0")
+base_hp = 90
+base_mp = 50
+base_atk = 8
+base_def = 9
+base_mag = 24
+base_mdf = 20
+base_spd = 12
+growth_hp = 12.0
+growth_mp = 8.0
+growth_atk = 1.0
+growth_def = 1.2
+growth_mag = 3.5
+growth_mdf = 2.8
+growth_spd = 1.3
+learnset = Array[ExtResource("1_sb1lw")]([SubResource("Resource_d13tt"), SubResource("Resource_7dmg7"), SubResource("Resource_bwhy1"), SubResource("Resource_fs7p6"), SubResource("Resource_agv5l"), SubResource("Resource_d03l4"), SubResource("Resource_3fajd"), SubResource("Resource_3iv25")])

@@ -1,0 +1,256 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/screens/title_screen.gd" id="1_dnhe2"]
+[ext_resource type="Environment" path="res://resources/environments/title_environment.tres" id="2_r3s2q"]
+[ext_resource type="CameraAttributesPractical" path="res://resources/environments/title_camera.tres" id="3_alyfn"]
+[ext_resource type="Material" path="res://resources/materials/ground.tres" id="4_ui475"]
+[ext_resource type="Material" path="res://resources/materials/moon.tres" id="5_wiri6"]
+[ext_resource type="PackedScene" path="res://scenes/props/castle_silhouette.tscn" id="6_c6o4j"]
+[ext_resource type="PackedScene" path="res://scenes/common/character_sprite.tscn" id="7_dd7wq"]
+[ext_resource type="Script" path="res://scripts/common/character_sprite.gd" id="8_seasm"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/garrick.tres" id="9_c31ja"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/arlen.tres" id="10_4udt4"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/theia.tres" id="11_txo4h"]
+[ext_resource type="PackedScene" path="res://scenes/props/brazier.tscn" id="12_pltis"]
+[ext_resource type="PackedScene" path="res://scenes/props/dust.tscn" id="13_gc47g"]
+[ext_resource type="Material" path="res://resources/materials/dust_particle.tres" id="14_d8glk"]
+[ext_resource type="Script" path="res://scripts/common/dust.gd" id="15_eo2pt"]
+[ext_resource type="Script" path="res://scripts/ui/select_list.gd" id="16_232qh"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_6nhc1"]
+size = Vector3(200, 0.2, 200)
+
+[sub_resource type="SphereMesh" id="SphereMesh_los2u"]
+radius = 7.0
+height = 14.0
+
+[sub_resource type="Gradient" id="Gradient_mjj4l"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_0m71p"]
+gradient = SubResource("Gradient_mjj4l")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_odevt"]
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0.3, 1, 0)
+spread = 60.0
+initial_velocity_min = 0.05
+initial_velocity_max = 0.25
+gravity = Vector3(0, 0.05, 0)
+scale_min = 0.4
+color_ramp = SubResource("GradientTexture1D_0m71p")
+
+[sub_resource type="QuadMesh" id="QuadMesh_acv1i"]
+size = Vector2(0.07, 0.07)
+
+[sub_resource type="Animation" id="Animation_d0pf7"]
+length = 20.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 2.2, 9), Vector3(0.84852815, 2.394474, 9), Vector3(1.2, 2.2907982, 9), Vector3(0.84852815, 2.0479188, 9), Vector3(1.4695762e-16, 2.0381966, 9), Vector3(-0.84852815, 2.2765367, 9), Vector3(-1.2, 2.3975377, 9), Vector3(-0.84852815, 2.2156918, 9), Vector3(-2.9391524e-16, 2.0097888, 9)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_5dfvl"]
+_data = {
+&"drift": SubResource("Animation_d0pf7")
+}
+
+[sub_resource type="Animation" id="Animation_6gu0t"]
+length = 1.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("UI/Root/Subtitle:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("UI/Root/Title:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("UI/Root/Tagline:modulate:a")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4lvl2"]
+_data = {
+&"intro": SubResource("Animation_6gu0t")
+}
+
+[node name="TitleScreen" type="Node3D" unique_id=2120797867]
+script = ExtResource("1_dnhe2")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1924114167]
+unique_name_in_owner = true
+environment = ExtResource("2_r3s2q")
+camera_attributes = ExtResource("3_alyfn")
+
+[node name="Moonlight" type="DirectionalLight3D" parent="." unique_id=1302799015]
+transform = Transform3D(0.8660254, 0.40957603, -0.28678823, 0, 0.57357645, 0.81915206, 0.5, -0.7094065, 0.49673176, 0, 0, 0)
+light_color = Color(0.6, 0.65, 1, 1)
+light_energy = 0.6
+light_volumetric_fog_energy = 0.6
+shadow_enabled = true
+shadow_blur = 1.5
+directional_shadow_max_distance = 60.0
+
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=1377949232]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -60)
+material_override = ExtResource("4_ui475")
+mesh = SubResource("BoxMesh_6nhc1")
+
+[node name="Moon" type="MeshInstance3D" parent="." unique_id=1843765103]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, 26, -110)
+material_override = ExtResource("5_wiri6")
+mesh = SubResource("SphereMesh_los2u")
+
+[node name="CastleSilhouette" type="Node3D" parent="." unique_id=1248618030 instance=ExtResource("6_c6o4j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -45)
+
+[node name="Heroes" type="Node3D" parent="." unique_id=2074609546]
+
+[node name="Garrick" type="Node3D" parent="Heroes" unique_id=1573082034 instance=ExtResource("7_dd7wq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4, 0, 0.5)
+script = ExtResource("8_seasm")
+sprite_frames = ExtResource("9_c31ja")
+
+[node name="Arlen" type="Node3D" parent="Heroes" unique_id=1742202350 instance=ExtResource("7_dd7wq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9, 0, 0.9)
+script = ExtResource("8_seasm")
+sprite_frames = ExtResource("10_4udt4")
+
+[node name="Theia" type="Node3D" parent="Heroes" unique_id=119509292 instance=ExtResource("7_dd7wq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0, 0.5)
+script = ExtResource("8_seasm")
+sprite_frames = ExtResource("11_txo4h")
+
+[node name="BrazierLeft" type="StaticBody3D" parent="." unique_id=212653876 instance=ExtResource("12_pltis")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 1.5)
+
+[node name="BrazierRight" type="StaticBody3D" parent="." unique_id=778980763 instance=ExtResource("12_pltis")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 1.5)
+
+[node name="Embers" type="GPUParticles3D" parent="." unique_id=1121255567 instance=ExtResource("13_gc47g")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+material_override = ExtResource("14_d8glk")
+amount = 140
+lifetime = 7.0
+preprocess = 7.0
+process_material = SubResource("ParticleProcessMaterial_odevt")
+draw_pass_1 = SubResource("QuadMesh_acv1i")
+script = ExtResource("15_eo2pt")
+extents = Vector3(10, 4, 6)
+
+[node name="Camera" type="Camera3D" parent="." unique_id=1598677907]
+transform = Transform3D(1, 0, 0, 0, 0.9994449, -0.03331483, 0, 0.03331483, 0.9994449, 0, 2.2, 9)
+current = true
+fov = 45.0
+far = 300.0
+
+[node name="CameraDrift" type="AnimationPlayer" parent="." unique_id=904804558]
+libraries/ = SubResource("AnimationLibrary_5dfvl")
+autoplay = &"drift"
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=96842450]
+layer = 5
+
+[node name="Root" type="Control" parent="UI" unique_id=203095046]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Subtitle" type="Label" parent="UI/Root" unique_id=7174603]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+anchor_right = 1.0
+offset_top = 70.0
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.85, 0.82, 1, 1)
+text = "~ An HD-2D Tale ~"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="UI/Root" unique_id=1665553621]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+anchor_right = 1.0
+offset_top = 100.0
+theme_type_variation = &"TitleLabel"
+text = "SHARDS OF DAWN"
+horizontal_alignment = 1
+
+[node name="Tagline" type="Label" parent="UI/Root" unique_id=195317393]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+anchor_right = 1.0
+offset_top = 196.0
+theme_override_font_sizes/font_size = 34
+theme_override_colors/font_color = Color(0.95, 0.9, 1, 1)
+text = "The Dark Castle"
+horizontal_alignment = 1
+
+[node name="MenuPanel" type="PanelContainer" parent="UI/Root" unique_id=1023980201]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -250.0
+offset_right = -140.0
+offset_bottom = -130.0
+theme_type_variation = &"TranslucentPanel"
+
+[node name="MenuList" type="VBoxContainer" parent="UI/Root/MenuPanel" unique_id=215451346]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("16_232qh")
+allow_cancel = false
+
+[node name="Hint" type="Label" parent="UI/Root" unique_id=1985212330]
+layout_mode = 0
+anchor_right = 1.0
+offset_top = 680.0
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.8, 0.8, 0.9, 0.8)
+text = "Arrows/WASD to move • Z/Enter to confirm • X/Esc to cancel"
+horizontal_alignment = 1
+
+[node name="IntroAnimation" type="AnimationPlayer" parent="." unique_id=319889108]
+unique_name_in_owner = true
+libraries/ = SubResource("AnimationLibrary_4lvl2")

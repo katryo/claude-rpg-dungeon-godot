@@ -1,0 +1,82 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/hellhound.png" id="1_xqrar"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3tnsg"]
+atlas = ExtResource("1_xqrar")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kmvr8"]
+atlas = ExtResource("1_xqrar")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8odsq"]
+atlas = ExtResource("1_xqrar")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ndr73"]
+atlas = ExtResource("1_xqrar")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0p2sq"]
+atlas = ExtResource("1_xqrar")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7a2tk"]
+atlas = ExtResource("1_xqrar")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fno6p"]
+atlas = ExtResource("1_xqrar")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1onta"]
+atlas = ExtResource("1_xqrar")
+region = Rect2(32, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3tnsg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kmvr8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8odsq")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ndr73")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0p2sq")
+}],
+"loop": false,
+"name": &"cast",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7a2tk")
+}],
+"loop": false,
+"name": &"hurt",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fno6p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1onta")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.5
+}]

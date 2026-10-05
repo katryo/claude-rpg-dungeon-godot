@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/carpet.png" id="1_oxt48"]
+
+[resource]
+albedo_texture = ExtResource("1_oxt48")
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 2

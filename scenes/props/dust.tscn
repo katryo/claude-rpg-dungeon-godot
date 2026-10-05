@@ -1,0 +1,34 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://resources/materials/dust_particle.tres" id="1_s6dnp"]
+[ext_resource type="Script" path="res://scripts/common/dust.gd" id="2_jujdd"]
+
+[sub_resource type="Gradient" id="Gradient_mjj4l"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_0m71p"]
+gradient = SubResource("Gradient_mjj4l")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_odevt"]
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0.3, 1, 0)
+spread = 60.0
+initial_velocity_min = 0.05
+initial_velocity_max = 0.25
+gravity = Vector3(0, 0.05, 0)
+scale_min = 0.4
+color_ramp = SubResource("GradientTexture1D_0m71p")
+
+[sub_resource type="QuadMesh" id="QuadMesh_acv1i"]
+size = Vector2(0.07, 0.07)
+
+[node name="Dust" type="GPUParticles3D" unique_id=1121255567]
+material_override = ExtResource("1_s6dnp")
+amount = 90
+lifetime = 7.0
+preprocess = 7.0
+process_material = SubResource("ParticleProcessMaterial_odevt")
+draw_pass_1 = SubResource("QuadMesh_acv1i")
+script = ExtResource("2_jujdd")

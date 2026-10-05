@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="1_vrj3k"]
+[ext_resource type="Script" path="res://scripts/resources/skill_data.gd" id="2_n2her"]
+
+[sub_resource type="Resource" id="Resource_bm1bs"]
+script = ExtResource("1_vrj3k")
+multiplier = 1.4
+
+[resource]
+script = ExtResource("2_n2her")
+display_name = "War Cry"
+description = "A thunderous battle cry that raises the party's Attack."
+mp_cost = 8
+kind = 4
+element = 7
+power = 0.0
+target = 3
+buffs = Array[ExtResource("1_vrj3k")]([SubResource("Resource_bm1bs")])

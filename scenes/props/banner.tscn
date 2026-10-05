@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://resources/materials/banner.tres" id="1_giw3a"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_lbfw1"]
+size = Vector2(1, 2.4)
+
+[node name="Banner" type="MeshInstance3D" unique_id=65425243]
+material_override = ExtResource("1_giw3a")
+mesh = SubResource("QuadMesh_lbfw1")

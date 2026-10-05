@@ -1,0 +1,82 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/sorcerer.png" id="1_t1o17"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g7dln"]
+atlas = ExtResource("1_t1o17")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_43vr4"]
+atlas = ExtResource("1_t1o17")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_di3os"]
+atlas = ExtResource("1_t1o17")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u5aan"]
+atlas = ExtResource("1_t1o17")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j7icm"]
+atlas = ExtResource("1_t1o17")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5xi48"]
+atlas = ExtResource("1_t1o17")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vwww3"]
+atlas = ExtResource("1_t1o17")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ed758"]
+atlas = ExtResource("1_t1o17")
+region = Rect2(32, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g7dln")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_43vr4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_di3os")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u5aan")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j7icm")
+}],
+"loop": false,
+"name": &"cast",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5xi48")
+}],
+"loop": false,
+"name": &"hurt",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vwww3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ed758")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.5
+}]

@@ -1,3 +1,5 @@
+@tool
+class_name StatBar
 extends Control
 ## Slim JRPG-style gauge used for HP / MP / EXP.
 
@@ -13,11 +15,7 @@ extends Control
 	set(v):
 		color = v
 		queue_redraw()
-
-
-func _init() -> void:
-	custom_minimum_size = Vector2(120, 8)
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+@export var border_color := Color(0.86, 0.74, 0.42, 0.8)
 
 
 func _draw() -> void:
@@ -28,4 +26,4 @@ func _draw() -> void:
 		var fill := Rect2(Vector2(1, 1), Vector2((size.x - 2) * k, size.y - 2))
 		draw_rect(fill, color.darkened(0.25))
 		draw_rect(Rect2(fill.position, Vector2(fill.size.x, fill.size.y * 0.5)), color)
-	draw_rect(r, Color(0.86, 0.74, 0.42, 0.8), false, 1.0)
+	draw_rect(r, border_color, false, 1.0)

@@ -1,0 +1,97 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://resources/materials/dais_stone.tres" id="1_3dem2"]
+[ext_resource type="Material" path="res://resources/materials/throne_dark.tres" id="2_rhpct"]
+[ext_resource type="Material" path="res://resources/materials/gold.tres" id="3_i5qvm"]
+[ext_resource type="PackedScene" path="res://scenes/common/character_sprite.tscn" id="4_gwtl7"]
+[ext_resource type="Script" path="res://scripts/common/character_sprite.gd" id="5_o7snf"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/dark_lord.tres" id="6_ys4ad"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_8ovch"]
+size = Vector3(6, 0.4, 3.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_qgdno"]
+size = Vector3(1.6, 0.8, 1.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kntxn"]
+size = Vector3(1.8, 3.6, 0.3)
+
+[sub_resource type="PrismMesh" id="PrismMesh_nj533"]
+size = Vector3(0.5, 1.2, 0.3)
+
+[sub_resource type="PrismMesh" id="PrismMesh_ir4gt"]
+size = Vector3(0.5, 1.2, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4651f"]
+size = Vector3(1.8, 4, 1.5)
+
+[sub_resource type="Animation" id="Animation_klheh"]
+length = 1.9
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DarkLord/Sprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.95, 1.9),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 0.6, 1, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3xhsu"]
+_data = {
+&"menace": SubResource("Animation_klheh")
+}
+
+[node name="Throne" type="Node3D" unique_id=1093312209]
+
+[node name="Dais" type="MeshInstance3D" parent="." unique_id=1281256158]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -0.3)
+material_override = ExtResource("1_3dem2")
+mesh = SubResource("BoxMesh_8ovch")
+
+[node name="Seat" type="MeshInstance3D" parent="." unique_id=984951175]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.5)
+material_override = ExtResource("2_rhpct")
+mesh = SubResource("BoxMesh_qgdno")
+
+[node name="Back" type="MeshInstance3D" parent="." unique_id=1727227426]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -1)
+material_override = ExtResource("2_rhpct")
+mesh = SubResource("BoxMesh_kntxn")
+
+[node name="SpikeLeft" type="MeshInstance3D" parent="." unique_id=1582349516]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, 4.5, -1)
+material_override = ExtResource("3_i5qvm")
+mesh = SubResource("PrismMesh_nj533")
+
+[node name="SpikeRight" type="MeshInstance3D" parent="." unique_id=128408912]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 4.5, -1)
+material_override = ExtResource("3_i5qvm")
+mesh = SubResource("PrismMesh_ir4gt")
+
+[node name="Glow" type="OmniLight3D" parent="." unique_id=1519108787]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0.5)
+light_color = Color(0.7, 0.2, 1, 1)
+light_energy = 3.0
+light_volumetric_fog_energy = 2.5
+omni_range = 9.0
+
+[node name="Body" type="StaticBody3D" parent="." unique_id=260885279]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body" unique_id=1016506637]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -0.6)
+shape = SubResource("BoxShape3D_4651f")
+
+[node name="DarkLord" type="Node3D" parent="." unique_id=1573082034 instance=ExtResource("4_gwtl7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0.2)
+script = ExtResource("5_o7snf")
+sprite_frames = ExtResource("6_ys4ad")
+sprite_scale = 1.6
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1277497136]
+libraries/ = SubResource("AnimationLibrary_3xhsu")
+autoplay = &"menace"

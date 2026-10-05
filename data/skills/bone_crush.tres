@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="1_pi1cc"]
+[ext_resource type="Script" path="res://scripts/resources/skill_data.gd" id="2_36owi"]
+
+[resource]
+script = ExtResource("2_36owi")
+display_name = "Bone Crush"
+power = 1.45

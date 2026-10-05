@@ -3,9 +3,6 @@ extends Node
 ## encounter -> battle -> crystal -> chest -> boss -> ending -> title.
 ##   godot --headless --path . res://tests/flow_test.tscn
 
-const Battle := preload("res://scripts/battle/battle.gd")
-const Castle := preload("res://scripts/world/castle.gd")
-const Title := preload("res://scripts/ui/title.gd")
 
 var main: Node
 var failures := 0
@@ -15,8 +12,8 @@ func _ready() -> void:
 	Engine.time_scale = 3.0
 	main = load("res://scenes/main.tscn").instantiate()
 	add_child(main)
-	await _wait(2.0)
-	_check(main.screen is Title, "title shown")
+	await _wait_for(func(): return main.screen is TitleScreen and main.screen.get_node("%MenuList").active, 10.0)
+	_check(main.screen is TitleScreen, "title shown")
 	await press("ui_accept")                     # New Game
 	await _wait(2.0)
 	await _skip_dialogue()
@@ -44,62 +41,62 @@ func _ready() -> void:
 	await press("ui_accept")
 	await press("ui_accept")                     # Potion
 	await press("ui_accept")                     # on Arlen (full HP -> buzz, not consumed)
-	_check(Game.inventory.get("potion", 0) == 6, "potion not wasted on full HP")
+	_check(Game.inventory.get(load("res://data/items/potion.tres"), 0) == 6, "potion not wasted on full HP")
 	await press("ui_cancel")                     # leave Items
 	await press("ui_cancel")                     # close menu
 	await _wait(0.3)
 	_check(not UI.menu_open, "menu closed")
 
 	# --- Encounter in the west wing (group 3)
-	var f: Node3D = main.field
-	f.place_party(f.cell_pos(4, 24))
+	var f: Castle = main.field
+	f.place_party(f.cell_to_world(Vector2i(4, 24)))
 	await _wait_for(func(): return _battle() != null, 8.0)
 	_check(_battle() != null, "battle started")
 	await _fight()
 	await _wait_for(func(): return main.field != null and main.field.is_inside_tree() and main.field.active and not UI.busy(), 8.0)
-	_check(Game.defeated_groups.has(3) or Game.defeated_groups.has(5), "west wing group defeated")
-	print("party after battle: ", Game.party.map(func(m): return "%s L%d %d/%d" % [m.name, m.level, m.hp, Game.max_hp(m)]))
+	_check(Game.defeated_enemies.has(&"west_wing_north") or Game.defeated_enemies.has(&"west_wing_south"), "west wing group defeated")
+	print("party after battle: ", Game.party.map(func(m: PartyMember): return "%s L%d %d/%d" % [m.display_name, m.level, m.hp, m.max_hp()]))
 
 	# --- Save crystal
 	f = main.field
-	f.place_party(f.cell_pos(17, 15) + Vector3(0, 0, 1.2))
+	f.place_party(f.cell_to_world(Vector2i(17, 15)) + Vector3(0, 0, 1.2))
 	await _wait(0.3)
-	await press("ui_accept")
+	await press("interact")
 	await _wait(0.5)
 	await _skip_dialogue()
-	_check(Game.party.all(func(m): return m.hp == Game.max_hp(m)), "crystal restored party")
+	_check(Game.party.all(func(m: PartyMember): return m.hp == m.max_hp()), "crystal restored party")
 
 	# --- Chest 0 (Olympian Scepter)
-	f.place_party(f.cell_pos(7, 13) + Vector3(0, 0, 1.1))
+	f.place_party(f.cell_to_world(Vector2i(7, 13)) + Vector3(0, 0, 1.1))
 	await _wait(0.3)
-	await press("ui_accept")
+	await press("interact")
 	await _wait(1.0)
 	await _skip_dialogue()
-	_check(Game.equip_bag.has("olympian_scepter"), "chest gave Olympian Scepter")
+	_check(Game.equip_bag.has(load("res://data/equipment/olympian_scepter.tres")), "chest gave Olympian Scepter")
 
 	# --- Boss (power the party up so the test is quick)
 	for m in Game.party:
 		Game.gain_exp(m, 200000)
-		m.hp = Game.max_hp(m)
-		m.mp = Game.max_mp(m)
-	Game.defeated_groups[0] = true
-	f.remove_enemy(0)
-	f.place_party(f.cell_pos(17, 8))
+		m.hp = m.max_hp()
+		m.mp = m.max_mp()
+	Game.defeated_enemies[&"throne_guardians"] = true
+	f.get_node("%Enemies/ThroneGuardians").queue_free()
+	f.place_party(f.cell_to_world(Vector2i(17, 8)))
 	await _wait(0.2)
-	f.place_party(f.cell_pos(17, 4))
+	f.place_party(f.cell_to_world(Vector2i(17, 4)))
 	await _wait(1.0)
 	await _skip_dialogue()
 	await _wait_for(func(): return _battle() != null, 8.0)
 	_check(_battle() != null and _battle().boss, "boss battle started")
 	await _fight()
-	await _wait_for(func(): return main.screen is Title and main.screen.ending, 10.0)
-	_check(main.screen is Title and main.screen.ending, "ending reached")
+	await _wait_for(func(): return main.screen is EndingScreen, 10.0)
+	_check(main.screen is EndingScreen, "ending reached")
 	await _wait(2.5)
 	await _skip_dialogue()
 	await _wait(3.0)
 	await press("ui_accept")
 	await _wait(3.0)
-	_check(main.screen is Title and not main.screen.ending, "back to title")
+	_check(main.screen is TitleScreen, "back to title")
 	print("FLOW TEST DONE, failures: %d" % failures)
 	get_tree().quit(1 if failures > 0 else 0)
 
@@ -123,8 +120,6 @@ func _fight() -> void:
 		else:
 			await _wait(0.1)
 		guard += 1
-		if guard % 40 == 0:
-			print("  fight dbg: cmd=%s tgt=%s sub=%s dlg=%s banner='%s' foes=%s" % [b.cmd_list.active, b._targeting, b.sub_panel.visible, UI.dialogue_open, b.banner_label.text, b.foes.map(func(x): return x.hp)])
 
 
 func _skip_dialogue() -> void:

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_jwo3r"]
+[ext_resource type="Resource" path="res://data/heroes/garrick.tres" id="2_2hfcx"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_ryq2n"]
+
+[resource]
+script = ExtResource("3_ryq2n")
+display_name = "Titan Plate"
+description = "Said to be forged for the Titans themselves."
+slot = 2
+allowed_heroes = Array[ExtResource("1_jwo3r")]([ExtResource("2_2hfcx")])
+hp = 60
+def = 30
+mdf = 8

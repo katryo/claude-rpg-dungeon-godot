@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_action.gd" id="1_dor20"]
+[ext_resource type="Resource" path="res://data/skills/attack.tres" id="2_7asps"]
+[ext_resource type="Resource" path="res://data/skills/flame_breath.tres" id="3_rhteq"]
+[ext_resource type="Script" path="res://scripts/resources/enemy_data.gd" id="4_t4wbq"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/hellhound.tres" id="5_arnd4"]
+
+[sub_resource type="Resource" id="Resource_uytk8"]
+script = ExtResource("1_dor20")
+skill = ExtResource("2_7asps")
+weight = 6
+
+[sub_resource type="Resource" id="Resource_wv4i3"]
+script = ExtResource("1_dor20")
+skill = ExtResource("3_rhteq")
+weight = 3
+
+[resource]
+script = ExtResource("4_t4wbq")
+display_name = "Hellbeast"
+sprite_frames = ExtResource("5_arnd4")
+sprite_scale = 1.2
+hp = 200
+atk = 35
+def = 18
+mag = 26
+mdf = 14
+spd = 18
+exp_reward = 56
+gold_reward = 26
+weaknesses = 2
+resistances = 1
+actions = Array[ExtResource("1_dor20")]([SubResource("Resource_uytk8"), SubResource("Resource_wv4i3")])

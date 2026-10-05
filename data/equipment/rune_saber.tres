@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_b85ne"]
+[ext_resource type="Resource" path="res://data/heroes/arlen.tres" id="2_i5evv"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_l3gp0"]
+
+[resource]
+script = ExtResource("3_l3gp0")
+display_name = "Rune Saber"
+description = "A sword etched with glowing runes."
+allowed_heroes = Array[ExtResource("1_b85ne")]([ExtResource("2_i5evv")])
+atk = 12
+mag = 5

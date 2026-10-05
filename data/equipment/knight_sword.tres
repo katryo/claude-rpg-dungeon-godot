@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_jfwxi"]
+[ext_resource type="Resource" path="res://data/heroes/garrick.tres" id="2_77sbq"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_mhsvk"]
+
+[resource]
+script = ExtResource("3_mhsvk")
+display_name = "Knight's Sword"
+description = "A sturdy blade of the royal guard."
+allowed_heroes = Array[ExtResource("1_jfwxi")]([ExtResource("2_77sbq")])
+atk = 14

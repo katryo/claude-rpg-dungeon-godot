@@ -1,0 +1,324 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/party_menu.gd" id="1_ebo8k"]
+[ext_resource type="Script" path="res://scripts/ui/select_list.gd" id="2_dgiey"]
+[ext_resource type="PackedScene" path="res://scenes/ui/party_card.tscn" id="3_pwvgl"]
+[ext_resource type="Script" path="res://scripts/ui/party_card.gd" id="4_qt01k"]
+
+[node name="PartyMenu" type="CanvasLayer" unique_id=1271218557]
+layer = 10
+script = ExtResource("1_ebo8k")
+
+[node name="Root" type="Control" parent="." unique_id=1918862888]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Dim" type="ColorRect" parent="Root" unique_id=138471421]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0.05, 0.45)
+
+[node name="CommandPanel" type="PanelContainer" parent="Root" unique_id=2113231884]
+custom_minimum_size = Vector2(270, 330)
+layout_mode = 0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 310.0
+offset_bottom = 370.0
+
+[node name="VBox" type="VBoxContainer" parent="Root/CommandPanel" unique_id=391868709]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Root/CommandPanel/VBox" unique_id=1038521189]
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "MENU"
+
+[node name="CommandList" type="VBoxContainer" parent="Root/CommandPanel/VBox" unique_id=1461015901]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("2_dgiey")
+
+[node name="InfoPanel" type="PanelContainer" parent="Root" unique_id=231678820]
+custom_minimum_size = Vector2(270, 290)
+layout_mode = 0
+offset_left = 40.0
+offset_top = 390.0
+offset_right = 310.0
+offset_bottom = 680.0
+
+[node name="VBox" type="VBoxContainer" parent="Root/InfoPanel" unique_id=1642396655]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LocationTitle" type="Label" parent="Root/InfoPanel/VBox" unique_id=371720817]
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+theme_override_font_sizes/font_size = 16
+text = "Location"
+
+[node name="LocationLabel" type="Label" parent="Root/InfoPanel/VBox" unique_id=248537999]
+layout_mode = 2
+text = "Castle Nocturne"
+
+[node name="TimeTitle" type="Label" parent="Root/InfoPanel/VBox" unique_id=1901880552]
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+theme_override_font_sizes/font_size = 16
+text = "Play Time"
+
+[node name="TimeLabel" type="Label" parent="Root/InfoPanel/VBox" unique_id=647700059]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0:00:00"
+
+[node name="GoldTitle" type="Label" parent="Root/InfoPanel/VBox" unique_id=665082818]
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+theme_override_font_sizes/font_size = 16
+text = "Gold"
+
+[node name="GoldLabel" type="Label" parent="Root/InfoPanel/VBox" unique_id=141080885]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0 G"
+
+[node name="HelpPanel" type="PanelContainer" parent="Root" unique_id=1609935984]
+custom_minimum_size = Vector2(910, 64)
+layout_mode = 0
+offset_left = 330.0
+offset_top = 40.0
+offset_right = 1240.0
+offset_bottom = 104.0
+
+[node name="HelpLabel" type="Label" parent="Root/HelpPanel" unique_id=978339179]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="ContentPanel" type="PanelContainer" parent="Root" unique_id=272737203]
+custom_minimum_size = Vector2(910, 560)
+layout_mode = 0
+offset_left = 330.0
+offset_top = 120.0
+offset_right = 1240.0
+offset_bottom = 680.0
+
+[node name="PartyView" type="VBoxContainer" parent="Root/ContentPanel" unique_id=1504003141]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Card0" type="PanelContainer" parent="Root/ContentPanel/PartyView" unique_id=825134885 instance=ExtResource("3_pwvgl")]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+script = ExtResource("4_qt01k")
+
+[node name="Card1" type="PanelContainer" parent="Root/ContentPanel/PartyView" unique_id=941213409 instance=ExtResource("3_pwvgl")]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+script = ExtResource("4_qt01k")
+
+[node name="Card2" type="PanelContainer" parent="Root/ContentPanel/PartyView" unique_id=1312559930 instance=ExtResource("3_pwvgl")]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+script = ExtResource("4_qt01k")
+
+[node name="StatusView" type="HBoxContainer" parent="Root/ContentPanel" unique_id=2022990925]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 28
+
+[node name="Profile" type="VBoxContainer" parent="Root/ContentPanel/StatusView" unique_id=1533448673]
+custom_minimum_size = Vector2(230, 0)
+layout_mode = 2
+
+[node name="StatusSprite" type="TextureRect" parent="Root/ContentPanel/StatusView/Profile" unique_id=1082025278]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(208, 256)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StatusName" type="Label" parent="Root/ContentPanel/StatusView/Profile" unique_id=1553415207]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Name"
+
+[node name="StatusJob" type="Label" parent="Root/ContentPanel/StatusView/Profile" unique_id=1288722318]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Job"
+
+[node name="StatusBio" type="Label" parent="Root/ContentPanel/StatusView/Profile" unique_id=1853860901]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(230, 0)
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+
+[node name="Parameters" type="VBoxContainer" parent="Root/ContentPanel/StatusView" unique_id=1045799028]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="StatusStats" type="GridContainer" parent="Root/ContentPanel/StatusView/Parameters" unique_id=1027606047]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="Loadout" type="VBoxContainer" parent="Root/ContentPanel/StatusView" unique_id=1914820706]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EquipmentTitle" type="Label" parent="Root/ContentPanel/StatusView/Loadout" unique_id=56815180]
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "Equipment"
+
+[node name="StatusEquipment" type="GridContainer" parent="Root/ContentPanel/StatusView/Loadout" unique_id=2115584654]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 2
+
+[node name="SkillsTitle" type="Label" parent="Root/ContentPanel/StatusView/Loadout" unique_id=879247836]
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "Skills"
+
+[node name="StatusSkills" type="GridContainer" parent="Root/ContentPanel/StatusView/Loadout" unique_id=563194168]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 2
+
+[node name="EquipView" type="VBoxContainer" parent="Root/ContentPanel" unique_id=1111155179]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Root/ContentPanel/EquipView" unique_id=2111501925]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="EquipPortrait" type="TextureRect" parent="Root/ContentPanel/EquipView/Header" unique_id=1939030180]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(88, 72)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EquipName" type="Label" parent="Root/ContentPanel/EquipView/Header" unique_id=367604785]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+vertical_alignment = 1
+
+[node name="Body" type="HBoxContainer" parent="Root/ContentPanel/EquipView" unique_id=501038694]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Lists" type="VBoxContainer" parent="Root/ContentPanel/EquipView/Body" unique_id=168480388]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+
+[node name="SlotsTitle" type="Label" parent="Root/ContentPanel/EquipView/Body/Lists" unique_id=1080051383]
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "Slots"
+
+[node name="SlotList" type="VBoxContainer" parent="Root/ContentPanel/EquipView/Body/Lists" unique_id=1636685483]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("2_dgiey")
+
+[node name="AvailableTitle" type="Label" parent="Root/ContentPanel/EquipView/Body/Lists" unique_id=1078294060]
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "Available"
+
+[node name="CandidateList" type="VBoxContainer" parent="Root/ContentPanel/EquipView/Body/Lists" unique_id=1184665087]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("2_dgiey")
+max_rows = 6
+
+[node name="Compare" type="VBoxContainer" parent="Root/ContentPanel/EquipView/Body" unique_id=2020641783]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ParametersTitle" type="Label" parent="Root/ContentPanel/EquipView/Body/Compare" unique_id=587116278]
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "Parameters"
+
+[node name="CompareGrid" type="GridContainer" parent="Root/ContentPanel/EquipView/Body/Compare" unique_id=985140923]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 3
+
+[node name="SkillsView" type="VBoxContainer" parent="Root/ContentPanel" unique_id=1005850988]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="SkillsHeader" type="Label" parent="Root/ContentPanel/SkillsView" unique_id=474025831]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+
+[node name="SkillList" type="VBoxContainer" parent="Root/ContentPanel/SkillsView" unique_id=1010476310]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("2_dgiey")
+max_rows = 12
+
+[node name="ItemsView" type="VBoxContainer" parent="Root/ContentPanel" unique_id=1437517799]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="ItemsHeader" type="Label" parent="Root/ContentPanel/ItemsView" unique_id=2124105337]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Items"
+
+[node name="ItemList" type="VBoxContainer" parent="Root/ContentPanel/ItemsView" unique_id=1722811907]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("2_dgiey")
+max_rows = 12
+
+[node name="TargetPopup" type="PanelContainer" parent="Root" unique_id=210573364]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(430, 200)
+layout_mode = 0
+offset_left = 800.0
+offset_top = 200.0
+offset_right = 1230.0
+offset_bottom = 400.0
+
+[node name="VBox" type="VBoxContainer" parent="Root/TargetPopup" unique_id=970864610]
+layout_mode = 2
+
+[node name="Prompt" type="Label" parent="Root/TargetPopup/VBox" unique_id=1159817293]
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "Use on whom?"
+
+[node name="TargetList" type="VBoxContainer" parent="Root/TargetPopup/VBox" unique_id=1736868242]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("2_dgiey")

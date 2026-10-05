@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_ji3bx"]
+[ext_resource type="Resource" path="res://data/heroes/arlen.tres" id="2_73bjx"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_2bmkf"]
+
+[resource]
+script = ExtResource("3_2bmkf")
+display_name = "Starlight Blade"
+description = "Forged from a fallen star. Hums with power."
+allowed_heroes = Array[ExtResource("1_ji3bx")]([ExtResource("2_73bjx")])
+atk = 26
+mag = 12

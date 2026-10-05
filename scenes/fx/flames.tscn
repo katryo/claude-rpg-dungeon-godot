@@ -1,0 +1,48 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/fx/one_shot_fx.gd" id="1_vme80"]
+[ext_resource type="Material" path="res://resources/materials/fire_particle.tres" id="2_174d4"]
+
+[sub_resource type="Gradient" id="Gradient_j0g7i"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(2.5, 2.2, 1.2, 1, 2, 1.5, 1, 0.9, 0.6, 0.1, 0.05, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_sw4h3"]
+gradient = SubResource("Gradient_j0g7i")
+
+[sub_resource type="Curve" id="Curve_883s4"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.15), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_1iipk"]
+curve = SubResource("Curve_883s4")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mf3x2"]
+emission_shape = 1
+emission_sphere_radius = 0.7
+direction = Vector3(0, 1, 0)
+spread = 12.0
+initial_velocity_min = 1.0
+initial_velocity_max = 2.5
+gravity = Vector3(0, 4, 0)
+scale_max = 2.2
+scale_curve = SubResource("CurveTexture_1iipk")
+color_ramp = SubResource("GradientTexture1D_sw4h3")
+
+[sub_resource type="QuadMesh" id="QuadMesh_it1vs"]
+size = Vector2(0.45, 0.45)
+
+[node name="Flames" type="Node3D" unique_id=1359600975]
+script = ExtResource("1_vme80")
+lifetime = 2.0
+
+[node name="Particles" type="GPUParticles3D" parent="." unique_id=1800521247]
+material_override = ExtResource("2_174d4")
+emitting = false
+amount = 70
+lifetime = 0.9
+one_shot = true
+explosiveness = 0.2
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_mf3x2")
+draw_pass_1 = SubResource("QuadMesh_it1vs")

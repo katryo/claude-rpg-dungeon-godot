@@ -1,73 +1,89 @@
+class_name Battle
 extends Node3D
-## Turn-based HD-2D battle: 3D arena, pixel billboards, spell effects and a
-## classic command menu. Emits `finished("win" | "lose" | "flee")`.
-
-const DB := preload("res://scripts/data/db.gd")
-const Props := preload("res://scripts/world/props.gd")
-const PixelArt := preload("res://scripts/gfx/pixel_art.gd")
-const Battler := preload("res://scripts/battle/battler.gd")
-const SelectList := preload("res://scripts/ui/select_list.gd")
-const StatBar := preload("res://scripts/ui/stat_bar.gd")
+## Turn-based HD-2D battle. The arena, camera, slots and UI are authored in
+## battle.tscn; effects are separate scenes assigned in the inspector.
+## Emits `finished("win" | "lose" | "flee")`.
 
 signal finished(result: String)
 signal _nav(action: String)
 
-const SPRITE_SCALE := 1.25
 const GOLD := Color(1.0, 0.84, 0.45)
+const SPRITE_SCALE := 1.25
+const KO_TINT := Color(0.55, 0.4, 0.5)
 
-var enemy_ids: Array = []
+@export var character_scene: PackedScene
+@export_group("Effects")
+@export var burst_fx: PackedScene
+@export var rise_fx: PackedScene
+@export var implode_fx: PackedScene
+@export var flames_fx: PackedScene
+@export var slash_fx: PackedScene
+@export var bolt_fx: PackedScene
+@export var holy_pillar_fx: PackedScene
+@export var ice_shards_fx: PackedScene
+@export var meteor_fx: PackedScene
+@export var cast_circle_fx: PackedScene
+@export var damage_popup: PackedScene
+@export var target_cursor: PackedScene
+@export var flash_light: PackedScene
+@export_group("Boss fight")
+@export var boss_environment: Environment
+@export var boss_camera_attributes: CameraAttributes
+@export var boss_camera_offset := Vector3(0.0, 0.7, 1.2)
+
+var enemies: Array[EnemyData] = []
 var boss := false
 var auto_battle := false   # used by the headless balance test
 
-var heroes: Array = []
-var foes: Array = []
-var camera: Camera3D
+var heroes: Array[Battler] = []
+var foes: Array[Battler] = []
 var _cam_base := Vector3.ZERO
 var _cam_look := Vector3.ZERO
 var _shake := 0.0
 var _cam_push := Vector3.ZERO
-var _cursor_nodes: Array = []
+var _cursors: Array[Node3D] = []
 var _targeting := false
 var _fled := false
 var _boss_turns := 0
 var _boss_phase_shown := false
 
-# UI
-var ui_root: Control
-var cmd_panel: PanelContainer
-var cmd_list: SelectList
-var sub_panel: PanelContainer
-var sub_title: Label
-var sub_list: SelectList
-var party_rows: Array = []
-var banner: PanelContainer
-var banner_label: Label
-var info_panel: PanelContainer
-var info_label: Label
-var turn_strip: HBoxContainer
-var result_panel: PanelContainer
-var result_label: RichTextLabel
+@onready var camera: Camera3D = %Camera
+@onready var cmd_list: SelectList = %CommandList
+@onready var sub_panel: Control = %SkillPanel
+@onready var _sub_list: SelectList = %SkillList
+@onready var _banner: Control = %Banner
+@onready var _banner_label: Label = %BannerLabel
+@onready var _info_panel: Control = %InfoPanel
+@onready var _info_label: Label = %InfoLabel
+@onready var _rows: Array = %PartyRows.get_children()
 
 
-func setup(ids: Array, is_boss: bool) -> void:
-	enemy_ids = ids
+func setup(enemy_list: Array[EnemyData], is_boss: bool) -> void:
+	enemies = enemy_list
 	boss = is_boss
 
 
 func _ready() -> void:
-	Props.make_environment(self, 15.5 if boss else 14.0, boss)
-	Props.make_moonlight(self, 0.35)
-	_build_arena()
-	_build_camera()
+	%CommandPanel.hide()
+	sub_panel.hide()
+	_info_panel.hide()
+	%ResultPanel.hide()
+	_banner.modulate.a = 0.0
+	%BossDecor.visible = boss
+	if boss:
+		%WorldEnvironment.environment = boss_environment
+		%WorldEnvironment.camera_attributes = boss_camera_attributes
+		camera.position += boss_camera_offset
+		camera.fov += 4.0
+	_cam_base = camera.position
+	_cam_look = %CameraTarget.global_position + (Vector3(0, 0.7, -0.3) if boss else Vector3.ZERO)
 	_spawn_battlers()
-	_build_ui()
 	_refresh_party()
-	Sfx.play_music("boss" if boss else "battle")
+	Audio.play_music(&"boss" if boss else &"battle")
 	_run.call_deferred()
 
 
 func _process(delta: float) -> void:
-	Props.update_flicker(get_tree())
 	var t := Time.get_ticks_msec() / 1000.0
 	var sway := Vector3(sin(t * 0.35) * 0.25, sin(t * 0.5) * 0.08, 0)
 	var shake := Vector3.ZERO
@@ -76,303 +92,68 @@ func _process(delta: float) -> void:
 		shake = Vector3(randf_range(-1, 1), randf_range(-1, 1), 0) * _shake * 0.6
 	camera.position = _cam_base + sway + shake + _cam_push
 	camera.look_at(_cam_look + _cam_push * 0.6, Vector3.UP)
-	# Idle breathing for everyone still standing.
 	for b in heroes + foes:
-		if b.alive() and b.sprite:
-			var amp := 0.02 if not b.data.get("fly", false) else 0.15
-			b.sprite.position.y = b.base_y + sin(t * 2.2 + b.home.z) * amp
-	for i in _cursor_nodes.size():
-		var c: Node3D = _cursor_nodes[i]
-		c.position.y = c.get_meta("y") + absf(sin(t * 6.0)) * 0.15
-
-
-# ----------------------------------------------------------------- Arena ---
-func _build_arena() -> void:
-	var floor_mi := MeshInstance3D.new()
-	var fm := BoxMesh.new()
-	fm.size = Vector3(40, 0.2, 30)
-	floor_mi.mesh = fm
-	floor_mi.material_override = Props.floor_material()
-	floor_mi.position = Vector3(0, -0.1, 0)
-	add_child(floor_mi)
-
-	var wall := MeshInstance3D.new()
-	var wm := BoxMesh.new()
-	wm.size = Vector3(40, 10, 1)
-	wall.mesh = wm
-	wall.material_override = Props.wall_material()
-	wall.position = Vector3(0, 5, -6.5)
-	add_child(wall)
-
-	var carpet := MeshInstance3D.new()
-	var cm := BoxMesh.new()
-	cm.size = Vector3(40, 0.04, 2.6)
-	carpet.mesh = cm
-	carpet.material_override = Props.carpet_material()
-	carpet.position = Vector3(0, 0.02, -0.1)
-	add_child(carpet)
-	for side in [-1, 1]:
-		var trim := MeshInstance3D.new()
-		var tm := BoxMesh.new()
-		tm.size = Vector3(40, 0.05, 0.16)
-		trim.mesh = tm
-		trim.material_override = Props.tex_material(PixelArt.carpet_border(), 2.0)
-		trim.position = Vector3(0, 0.025, -0.1 + side * 1.3)
-		add_child(trim)
-
-	for x in [-9.0, -4.5, 4.5, 9.0]:
-		Props.make_pillar(self, Vector3(x, 0, -5.2), 9.0)
-	for x in [-6.75, 0.0, 6.75]:
-		Props.make_window(self, Vector3(x, 4.2, -5.97))
-		Props.make_banner(self, Vector3(x - 1.2, 3.0, -5.97))
-		Props.make_banner(self, Vector3(x + 1.2, 3.0, -5.97))
-	for x in [-7.0, 7.0]:
-		Props.make_brazier(self, Vector3(x, 0, -3.0))
-	Props.make_brazier(self, Vector3(-2.2, 0, -4.5))
-	Props.make_brazier(self, Vector3(2.2, 0, -4.5))
-
-	if boss:
-		var dark := Props.color_material(Color(0.12, 0.06, 0.16))
-		var back := MeshInstance3D.new()
-		var bk := BoxMesh.new()
-		bk.size = Vector3(2.4, 5.0, 0.4)
-		back.mesh = bk
-		back.material_override = dark
-		back.position = Vector3(-4.0, 2.5, -5.6)
-		add_child(back)
-		var aura := OmniLight3D.new()
-		aura.light_color = Color(0.7, 0.15, 1.0)
-		aura.light_energy = 4.0
-		aura.omni_range = 10.0
-		aura.position = Vector3(-4.0, 3.0, -2.0)
-		aura.light_volumetric_fog_energy = 3.0
-		aura.set_meta("base_energy", 4.0)
-		aura.set_meta("phase", 0.0)
-		aura.add_to_group("flicker")
-		add_child(aura)
-		Props.make_dust(self, Vector3(3, 3, 2), 120, Color(0.7, 0.3, 1.0, 0.8)).position = Vector3(-4, 2, -1)
-
-	Props.make_dust(self, Vector3(12, 4, 6), 160).position = Vector3(0, 2.5, 0)
-	var fill := OmniLight3D.new()
-	fill.light_color = Color(1.0, 0.85, 0.7)
-	fill.light_energy = 1.2
-	fill.omni_range = 12.0
-	fill.position = Vector3(0, 4.5, 4.0)
-	add_child(fill)
-
-
-func _build_camera() -> void:
-	camera = Camera3D.new()
-	camera.fov = 36.0 if not boss else 40.0
-	add_child(camera)
-	_cam_base = Vector3(0.3, 3.9, 13.8) if not boss else Vector3(0.0, 4.6, 15.0)
-	_cam_look = Vector3(0, 0.5, -0.6) if not boss else Vector3(0, 1.2, -0.9)
-	camera.position = _cam_base
-	camera.look_at(_cam_look, Vector3.UP)
-	camera.make_current()
+		if b.alive():
+			b.view.set_bob(sin(t * 2.2 + b.home.z) * (0.15 if b.flying else 0.02) + (0.6 if b.flying else 0.0))
 
 
 func _spawn_battlers() -> void:
-	var i := 0
-	for m in Game.party:
-		var b := Battler.hero(m)
-		b.home = Vector3(3.0 + i * 0.9, 0, -2.0 + i * 1.7)
-		_attach_sprite(b, DB.HEROES[m.id].sprite, SPRITE_SCALE)
-		b.sprite.flip_h = true
+	var slots := %HeroSlots.get_children()
+	for i in Game.party.size():
+		var b := Battler.from_member(Game.party[i])
+		b.home = slots[i].global_position
+		_attach_view(b, b.member.hero.sprite_frames, SPRITE_SCALE)
+		b.view.flipped = true
 		if not b.alive():
 			_show_ko(b, true)
 		heroes.append(b)
-		i += 1
+	var layout: Node = %EnemyLayouts.get_node("Boss" if boss else ["One", "Two", "Three"][clampi(enemies.size(), 1, 3) - 1])
 	var counts := {}
-	for id in enemy_ids:
-		counts[id] = counts.get(id, 0) + 1
+	for e in enemies:
+		counts[e] = counts.get(e, 0) + 1
 	var seen := {}
-	var n := enemy_ids.size()
-	for j in n:
-		var id: String = enemy_ids[j]
+	for j in enemies.size():
+		var e := enemies[j]
 		var suffix := ""
-		if counts[id] > 1:
-			suffix = " " + "ABC"[seen.get(id, 0)]
-			seen[id] = seen.get(id, 0) + 1
-		var b := Battler.enemy(id, suffix)
-		if b.is_boss:
-			b.home = Vector3(-3.6, 0, -0.9)
-		elif n == 1:
-			b.home = Vector3(-3.4, 0, -0.1)
-		elif n == 2:
-			b.home = Vector3(-2.6 - j * 2.0, 0, -0.9 + j * 1.6)
-		else:
-			b.home = [Vector3(-3.6, 0, -2.0), Vector3(-2.3, 0, 0.9), Vector3(-5.4, 0, 0.3)][j]
-		_attach_sprite(b, b.data.sprite, b.data.scale * SPRITE_SCALE * (0.75 if b.is_boss else 1.0))
-		if b.data.get("fly", false):
-			b.base_y += 0.6
+		if counts[e] > 1:
+			suffix = " " + "ABC"[seen.get(e, 0)]
+			seen[e] = seen.get(e, 0) + 1
+		var b := Battler.from_enemy(e, suffix)
+		b.home = layout.get_child(j).global_position
+		_attach_view(b, e.sprite_frames, e.sprite_scale * SPRITE_SCALE * (0.75 if e.is_boss else 1.0))
 		foes.append(b)
 
 
-func _attach_sprite(b, sprite_name: String, scale: float) -> void:
-	b.node = Props.make_billboard(sprite_name, scale)
-	b.node.position = b.home
-	add_child(b.node)
-	b.sprite = b.node.get_node("Sprite")
-	b.base_y = b.sprite.position.y
+func _attach_view(b: Battler, frames: SpriteFrames, scale_factor: float) -> void:
+	var v: CharacterSprite = character_scene.instantiate()
+	v.sprite_frames = frames
+	v.sprite_scale = scale_factor
+	%Battlers.add_child(v)
+	v.global_position = b.home
+	b.view = v
+
+
+func _spawn(scene: PackedScene, pos: Vector3, tint := Color.WHITE, size := 1.0) -> Node3D:
+	var fx: Node3D = scene.instantiate()
+	if "tint" in fx:
+		fx.tint = tint
+	%Effects.add_child(fx)
+	fx.global_position = pos
+	fx.scale = Vector3.ONE * size
+	return fx
 
 
 # -------------------------------------------------------------------- UI ---
-func _build_ui() -> void:
-	var layer := CanvasLayer.new()
-	layer.layer = 5
-	add_child(layer)
-	ui_root = Control.new()
-	ui_root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	ui_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	ui_root.theme = UI.theme
-	layer.add_child(ui_root)
-
-	# Party status
-	var pp := _panel(Vector2(560, 520), Vector2(680, 172))
-	var pv := VBoxContainer.new()
-	pv.add_theme_constant_override("separation", 2)
-	pp.add_child(pv)
-	for b in heroes:
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 14)
-		row.custom_minimum_size = Vector2(0, 46)
-		var cur := Label.new()
-		cur.custom_minimum_size = Vector2(18, 0)
-		cur.add_theme_color_override("font_color", GOLD)
-		row.add_child(cur)
-		var nm := Label.new()
-		nm.text = b.display_name
-		nm.custom_minimum_size = Vector2(110, 0)
-		row.add_child(nm)
-		var hp_box := VBoxContainer.new()
-		hp_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		hp_box.add_theme_constant_override("separation", 0)
-		var hp_l := Label.new()
-		hp_l.add_theme_font_size_override("font_size", 18)
-		hp_box.add_child(hp_l)
-		var hp_bar := StatBar.new()
-		hp_bar.color = Color(0.4, 0.95, 0.5)
-		hp_box.add_child(hp_bar)
-		row.add_child(hp_box)
-		var mp_box := VBoxContainer.new()
-		mp_box.custom_minimum_size = Vector2(170, 0)
-		mp_box.add_theme_constant_override("separation", 0)
-		var mp_l := Label.new()
-		mp_l.add_theme_font_size_override("font_size", 18)
-		mp_box.add_child(mp_l)
-		var mp_bar := StatBar.new()
-		mp_bar.color = Color(0.45, 0.7, 1.0)
-		mp_box.add_child(mp_bar)
-		row.add_child(mp_box)
-		var st := Label.new()
-		st.custom_minimum_size = Vector2(70, 0)
-		st.add_theme_font_size_override("font_size", 15)
-		row.add_child(st)
-		pv.add_child(row)
-		party_rows.append({"cur": cur, "name": nm, "hp": hp_l, "hpb": hp_bar, "mp": mp_l, "mpb": mp_bar, "st": st})
-
-	cmd_panel = _panel(Vector2(40, 492), Vector2(250, 200))
-	cmd_list = SelectList.new()
-	cmd_list.allow_cancel = false
-	cmd_panel.add_child(cmd_list)
-	cmd_panel.visible = false
-
-	sub_panel = _panel(Vector2(300, 300), Vector2(420, 392))
-	var sv := VBoxContainer.new()
-	sub_panel.add_child(sv)
-	sub_title = Label.new()
-	sub_title.add_theme_color_override("font_color", GOLD)
-	sv.add_child(sub_title)
-	sub_list = SelectList.new()
-	sub_list.max_rows = 9
-	sv.add_child(sub_list)
-	sub_panel.visible = false
-
-	banner = PanelContainer.new()
-	banner.anchor_left = 0.5
-	banner.anchor_right = 0.5
-	banner.offset_left = -330
-	banner.offset_right = 330
-	banner.offset_top = 100
-	banner.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	ui_root.add_child(banner)
-	banner_label = Label.new()
-	banner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	banner_label.add_theme_font_size_override("font_size", 24)
-	banner.add_child(banner_label)
-	banner.modulate.a = 0.0
-
-	info_panel = _panel(Vector2(40, 28), Vector2(520, 60))
-	info_label = Label.new()
-	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	info_panel.add_child(info_label)
-	info_panel.visible = false
-
-	var strip_panel := PanelContainer.new()
-	strip_panel.anchor_left = 1.0
-	strip_panel.anchor_right = 1.0
-	strip_panel.offset_left = -40
-	strip_panel.offset_right = -40
-	strip_panel.offset_top = 28
-	strip_panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	var sb := UI.panel_style(0.6)
-	sb.set_content_margin_all(6)
-	strip_panel.add_theme_stylebox_override("panel", sb)
-	ui_root.add_child(strip_panel)
-	var sh := HBoxContainer.new()
-	strip_panel.add_child(sh)
-	var tl := Label.new()
-	tl.text = "TURN"
-	tl.add_theme_font_size_override("font_size", 14)
-	tl.add_theme_color_override("font_color", GOLD)
-	sh.add_child(tl)
-	turn_strip = HBoxContainer.new()
-	sh.add_child(turn_strip)
-
-	result_panel = _panel(Vector2(340, 170), Vector2(600, 300))
-	result_label = RichTextLabel.new()
-	result_label.bbcode_enabled = true
-	result_label.fit_content = true
-	result_panel.add_child(result_label)
-	result_panel.visible = false
-
-
-func _panel(pos: Vector2, size: Vector2) -> PanelContainer:
-	var p := PanelContainer.new()
-	p.position = pos
-	p.custom_minimum_size = size
-	p.size = size
-	ui_root.add_child(p)
-	return p
-
-
-func _refresh_party(active = null) -> void:
-	for i in heroes.size():
-		var b = heroes[i]
-		var r: Dictionary = party_rows[i]
-		r.cur.text = "▶" if b == active else ""
-		r.name.add_theme_color_override("font_color", GOLD if b == active else (Color(1, 0.4, 0.4) if not b.alive() else Color(0.95, 0.93, 0.88)))
-		r.hp.text = "HP %d/%d" % [b.hp, b.max_hp()]
-		r.hpb.max_value = b.max_hp()
-		r.hpb.value = b.hp
-		r.hpb.color = Color(0.4, 0.95, 0.5) if b.hp > b.max_hp() / 4 else Color(1.0, 0.6, 0.2)
-		r.mp.text = "MP %d/%d" % [b.mp, b.max_mp()]
-		r.mpb.max_value = b.max_mp()
-		r.mpb.value = b.mp
-		var tags: Array = []
-		if not b.alive():
-			tags.append("KO")
-		else:
-			if b.provoke > 0:
-				tags.append("Taunt")
-			for k in b.buffs:
-				tags.append(("%s↑" if b.buffs[k].mult > 1.0 else "%s↓") % k.to_upper())
-		r.st.text = " ".join(tags)
+func _refresh_party(active: Battler = null) -> void:
+	for i in _rows.size():
+		_rows[i].visible = i < heroes.size()
+		if i < heroes.size():
+			_rows[i].show_battler(heroes[i], heroes[i] == active)
 
 
 func _update_strip(order: Array) -> void:
-	for c in turn_strip.get_children():
+	var strip: HBoxContainer = %TurnStrip
+	for c in strip.get_children():
 		c.queue_free()
 	for b in order:
 		if not b.alive():
@@ -381,47 +162,44 @@ func _update_strip(order: Array) -> void:
 		tr.custom_minimum_size = Vector2(40, 36)
 		tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		tr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		tr.texture = PixelArt.portrait(DB.HEROES[b.member.id].sprite) if b.is_hero else PixelArt.sprite(b.data.sprite)
+		tr.texture = b.icon()
 		if not b.is_hero:
 			tr.modulate = Color(1.0, 0.75, 0.8)
-		turn_strip.add_child(tr)
+		strip.add_child(tr)
 
 
 func _show_banner(text: String, color := Color(0.95, 0.93, 0.88)) -> void:
-	banner_label.text = text
-	banner_label.add_theme_color_override("font_color", color)
-	var tw := create_tween()
-	tw.tween_property(banner, "modulate:a", 1.0, 0.12)
+	_banner_label.text = text
+	_banner_label.add_theme_color_override("font_color", color)
+	create_tween().tween_property(_banner, "modulate:a", 1.0, 0.12)
 
 
 func _hide_banner() -> void:
-	var tw := create_tween()
-	tw.tween_property(banner, "modulate:a", 0.0, 0.2)
+	create_tween().tween_property(_banner, "modulate:a", 0.0, 0.2)
 
 
 func _info(text: String) -> void:
-	info_panel.visible = text != ""
-	info_label.text = text
+	_info_panel.visible = text != ""
+	_info_label.text = text
 
 
 # ------------------------------------------------------------------ Flow ---
 func _run() -> void:
-	await get_tree().create_timer(0.2).timeout
+	await _wait(0.2)
 	await UI.fade_in(0.4)
-	var names := {}
-	for f in foes:
-		names[f.data.name] = true
 	if boss:
-		_show_banner("Dark Lord Malzeth", Color(1.0, 0.5, 0.9))
+		_show_banner(foes[0].display_name, Color(1.0, 0.5, 0.9))
 	else:
+		var names := {}
+		for f in foes:
+			names[f.enemy.display_name] = true
 		_show_banner("%s appeared!" % " & ".join(names.keys()))
 	await _wait(1.1)
 	_hide_banner()
 	while true:
 		var order := _make_order()
 		for idx in order.size():
-			var b = order[idx]
+			var b: Battler = order[idx]
 			if not b.alive():
 				continue
 			_update_strip(order.slice(idx))
@@ -435,11 +213,12 @@ func _run() -> void:
 			if _fled:
 				await _end_flee()
 				return
-			if _all_dead(foes):
+			if _alive(foes).is_empty():
 				await _victory()
 				return
-			if _all_dead(heroes):
-				await _defeat()
+			if _alive(heroes).is_empty():
+				await _wait(0.8)
+				finished.emit("lose")
 				return
 
 
@@ -451,18 +230,14 @@ func _make_order() -> Array:
 			if b.is_boss and b.phase >= 2:
 				all.append([b.stat("spd") * randf_range(0.4, 0.7), b])
 	all.sort_custom(func(a, c): return a[0] > c[0])
-	return all.map(func(x): return x[1])
-
-
-func _all_dead(list: Array) -> bool:
-	for b in list:
-		if b.alive():
-			return false
-	return true
+	var out: Array = []
+	for x in all:
+		out.append(x[1])
+	return out
 
 
 func _alive(list: Array) -> Array:
-	return list.filter(func(b): return b.alive())
+	return list.filter(func(b: Battler): return b.alive())
 
 
 func _wait(t: float) -> void:
@@ -470,15 +245,14 @@ func _wait(t: float) -> void:
 
 
 # ------------------------------------------------------------ Hero turn ---
-func _hero_turn(b) -> void:
+func _hero_turn(b: Battler) -> void:
 	_refresh_party(b)
-	var step := create_tween()
-	step.tween_property(b.node, "position", b.home + Vector3(-0.6, 0, 0), 0.15)
+	create_tween().tween_property(b.view, "global_position", b.home + Vector3(-0.6, 0, 0), 0.15)
 	var action := {}
 	if auto_battle:
 		action = _auto_action(b)
 	while action.is_empty():
-		cmd_panel.visible = true
+		%CommandPanel.show()
 		cmd_list.set_items([
 			{"text": "Attack"},
 			{"text": "Skills"},
@@ -487,10 +261,9 @@ func _hero_turn(b) -> void:
 			{"text": "Flee", "enabled": not boss},
 		], true)
 		_info("")
-		var c := await cmd_list.choose()
-		match c:
+		match await cmd_list.choose():
 			0:
-				var t := await _pick_targets(b, "enemy")
+				var t := await _pick_targets(b, SkillData.Target.ENEMY)
 				if not t.is_empty():
 					action = {"type": "attack", "targets": t}
 			1:
@@ -501,170 +274,136 @@ func _hero_turn(b) -> void:
 				action = {"type": "defend", "targets": [b]}
 			4:
 				action = {"type": "flee", "targets": []}
-	cmd_panel.visible = false
-	sub_panel.visible = false
+	%CommandPanel.hide()
+	sub_panel.hide()
 	_info("")
 	var back := create_tween()
-	back.tween_property(b.node, "position", b.home, 0.12)
+	back.tween_property(b.view, "global_position", b.home, 0.12)
 	await back.finished
 	await _execute(b, action)
 	_refresh_party()
 
 
-func _choose_skill(b) -> Dictionary:
-	sub_title.text = "%s's Skills" % b.display_name
-	sub_panel.visible = true
+func _choose_skill(b: Battler) -> Dictionary:
+	%SkillTitle.text = "%s's Skills" % b.display_name
+	sub_panel.show()
+	var skills := b.skills()
 	while true:
-		var items: Array = []
-		for s in b.skills():
-			var sk: Dictionary = DB.SKILLS[s]
-			items.append({"text": sk.name, "right": "%d MP" % sk.mp, "enabled": b.mp >= sk.mp})
-		sub_list.set_items(items, true)
-		var on_move := func(i: int): _info(DB.SKILLS[b.skills()[i]].desc)
-		sub_list.moved.connect(on_move)
-		on_move.call(sub_list.index)
-		var si := await sub_list.choose()
-		sub_list.moved.disconnect(on_move)
+		_sub_list.set_items(skills.map(func(s: SkillData): return {
+			"text": s.display_name, "right": "%d MP" % s.mp_cost, "enabled": b.mp >= s.mp_cost}), true)
+		var on_move := func(i: int): _info(skills[i].description)
+		_sub_list.moved.connect(on_move)
+		on_move.call(_sub_list.index)
+		var si := await _sub_list.choose()
+		_sub_list.moved.disconnect(on_move)
 		if si < 0:
-			sub_panel.visible = false
+			sub_panel.hide()
 			return {}
-		var sid: String = b.skills()[si]
-		var t := await _pick_targets(b, DB.SKILLS[sid].target)
+		var t := await _pick_targets(b, skills[si].target)
 		if not t.is_empty():
-			sub_panel.visible = false
-			return {"type": "skill", "skill": sid, "targets": t}
+			sub_panel.hide()
+			return {"type": "skill", "skill": skills[si], "targets": t}
 	return {}
 
 
-func _choose_item(b) -> Dictionary:
-	sub_title.text = "Items"
-	sub_panel.visible = true
+func _choose_item(b: Battler) -> Dictionary:
+	%SkillTitle.text = "Items"
+	sub_panel.show()
 	while true:
-		var ids: Array = Game.item_list()
+		var ids := Game.item_list()
 		if ids.is_empty():
-			sub_panel.visible = false
+			sub_panel.hide()
 			return {}
-		var items: Array = []
-		for id in ids:
-			items.append({"text": DB.ITEMS[id].name, "right": "x%d" % Game.inventory[id]})
-		sub_list.set_items(items, true)
-		var on_move := func(i: int): _info(DB.ITEMS[ids[i]].desc)
-		sub_list.moved.connect(on_move)
-		on_move.call(sub_list.index)
-		var ii := await sub_list.choose()
-		sub_list.moved.disconnect(on_move)
+		_sub_list.set_items(ids.map(func(it: ItemData): return {"text": it.display_name, "right": "x%d" % Game.inventory[it]}), true)
+		var on_move := func(i: int): _info(ids[i].description)
+		_sub_list.moved.connect(on_move)
+		on_move.call(_sub_list.index)
+		var ii := await _sub_list.choose()
+		_sub_list.moved.disconnect(on_move)
 		if ii < 0:
-			sub_panel.visible = false
+			sub_panel.hide()
 			return {}
-		var id: String = ids[ii]
-		var t := await _pick_targets(b, DB.ITEMS[id].target)
+		var t := await _pick_targets(b, ids[ii].target)
 		if not t.is_empty():
-			sub_panel.visible = false
-			return {"type": "item", "item": id, "targets": t}
+			sub_panel.hide()
+			return {"type": "item", "item": ids[ii], "targets": t}
 	return {}
 
 
 ## Target selection with a bouncing cursor. Returns [] if cancelled.
-func _pick_targets(b, ttype: String) -> Array:
-	var pool: Array
+func _pick_targets(b: Battler, ttype: SkillData.Target) -> Array:
+	var pool: Array = []
 	var multi := false
 	match ttype:
-		"self":
+		SkillData.Target.SELF:
 			return [b]
-		"enemy":
+		SkillData.Target.ENEMY:
 			pool = _alive(foes)
-		"all_enemies":
+		SkillData.Target.ALL_ENEMIES:
 			pool = _alive(foes)
 			multi = true
-		"ally":
+		SkillData.Target.ALLY:
 			pool = _alive(heroes)
-		"all_allies":
+		SkillData.Target.ALL_ALLIES:
 			pool = _alive(heroes)
 			multi = true
-		"dead_ally":
-			pool = heroes.filter(func(h): return not h.alive())
+		SkillData.Target.DEAD_ALLY:
+			pool = heroes.filter(func(h: Battler): return not h.alive())
 	if pool.is_empty():
-		Sfx.play("buzz")
+		Audio.play_sfx(&"buzz")
 		return []
-	pool.sort_custom(func(x, y): return x.home.z < y.home.z)
-	var idx := 0
-	if ttype == "ally" and pool.has(b):
-		idx = pool.find(b)
+	pool.sort_custom(func(x: Battler, y: Battler): return x.home.z < y.home.z)
+	var idx := maxi(0, pool.find(b)) if ttype == SkillData.Target.ALLY else 0
 	while true:
-		var shown: Array = pool if multi else [pool[idx]]
-		_show_cursors(shown)
+		_show_cursors(pool if multi else [pool[idx]])
 		if multi:
-			_info("Target: all %s" % ("enemies" if ttype == "all_enemies" else "allies"))
+			_info("Target: all %s" % ("enemies" if ttype == SkillData.Target.ALL_ENEMIES else "allies"))
 		else:
-			var t = pool[idx]
-			_info("%s   HP %d/%d" % [t.display_name, t.hp, t.max_hp()] if t.is_hero else "%s%s" % [t.display_name, _foe_hint(t)])
+			var t: Battler = pool[idx]
+			_info("%s   HP %d/%d" % [t.display_name, t.hp, t.max_hp()] if t.is_hero else t.display_name + _foe_hint(t))
 		_targeting = true
 		var a: String = await _nav
 		_targeting = false
 		match a:
-			"up", "left":
-				idx = wrapi(idx - 1, 0, pool.size())
-				Sfx.play("cursor")
-			"down", "right":
-				idx = wrapi(idx + 1, 0, pool.size())
-				Sfx.play("cursor")
+			"up", "left", "down", "right":
+				idx = wrapi(idx + (-1 if a in ["up", "left"] else 1), 0, pool.size())
+				Audio.play_sfx(&"cursor")
 			"accept":
-				Sfx.play("confirm")
+				Audio.play_sfx(&"confirm")
 				_show_cursors([])
 				return pool.duplicate() if multi else [pool[idx]]
 			"cancel":
-				Sfx.play("cancel")
+				Audio.play_sfx(&"cancel")
 				_show_cursors([])
 				_info("")
 				return []
 	return []
 
 
-func _foe_hint(t) -> String:
-	var k: float = float(t.hp) / t.max_hp()
-	var state := "Unhurt" if k > 0.95 else ("Wounded" if k > 0.5 else ("Badly hurt" if k > 0.2 else "Near death"))
-	return "   — %s" % state
+func _foe_hint(t: Battler) -> String:
+	var k := float(t.hp) / t.max_hp()
+	return "   — %s" % ("Unhurt" if k > 0.95 else ("Wounded" if k > 0.5 else ("Badly hurt" if k > 0.2 else "Near death")))
 
 
 func _show_cursors(targets: Array) -> void:
-	for c in _cursor_nodes:
+	for c in _cursors:
 		c.queue_free()
-	_cursor_nodes.clear()
+	_cursors.clear()
 	for t in targets:
-		var l := Label3D.new()
-		l.text = "▼"
-		l.font_size = 72
-		l.pixel_size = 0.008
-		l.modulate = GOLD
-		l.outline_size = 14
-		l.outline_modulate = Color(0.1, 0.05, 0.0)
-		l.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		l.no_depth_test = true
-		l.render_priority = 10
-		var h: float = t.sprite.texture.get_height() * t.sprite.pixel_size
-		l.position = t.node.position + Vector3(0, h + 0.3 + (0.6 if t.data.get("fly", false) else 0.0), 0)
-		l.set_meta("y", l.position.y)
-		add_child(l)
-		_cursor_nodes.append(l)
+		var c: Node3D = target_cursor.instantiate()
+		%Effects.add_child(c)
+		c.global_position = t.view.global_position + Vector3(0, t.view.height() + 0.3 + (0.6 if t.flying else 0.0), 0)
+		_cursors.append(c)
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _targeting:
 		return
 	var a := ""
-	if event.is_action_pressed("ui_up", true):
-		a = "up"
-	elif event.is_action_pressed("ui_down", true):
-		a = "down"
-	elif event.is_action_pressed("ui_left", true):
-		a = "left"
-	elif event.is_action_pressed("ui_right", true):
-		a = "right"
-	elif event.is_action_pressed("ui_accept"):
-		a = "accept"
-	elif event.is_action_pressed("ui_cancel"):
-		a = "cancel"
-	elif event is InputEventMouseButton and event.pressed:
+	for action in ["up", "down", "left", "right", "accept", "cancel"]:
+		if event.is_action_pressed("ui_" + action, action in ["up", "down", "left", "right"]):
+			a = action
+	if event is InputEventMouseButton and event.pressed:
 		a = "accept" if event.button_index == MOUSE_BUTTON_LEFT else ("cancel" if event.button_index == MOUSE_BUTTON_RIGHT else "")
 	if a != "":
 		get_viewport().set_input_as_handled()
@@ -672,296 +411,267 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 ## Simple AI used for automated balance testing.
-func _auto_action(b) -> Dictionary:
-	var hurt: Array = _alive(heroes).filter(func(h): return h.hp < h.max_hp() * 0.45)
-	var dead: Array = heroes.filter(func(h): return not h.alive())
-	var foe = _alive(foes).pick_random()
-	var sk: Array = b.skills()
-	if not dead.is_empty() and sk.has("raise") and b.mp >= DB.SKILLS.raise.mp:
-		return {"type": "skill", "skill": "raise", "targets": [dead[0]]}
-	if not dead.is_empty() and Game.inventory.get("phoenix", 0) > 0:
-		return {"type": "item", "item": "phoenix", "targets": [dead[0]]}
-	if hurt.size() >= 2 and sk.has("heal_all") and b.mp >= DB.SKILLS.heal_all.mp:
-		return {"type": "skill", "skill": "heal_all", "targets": _alive(heroes)}
-	if not hurt.is_empty() and sk.has("cure") and b.mp >= DB.SKILLS.cure.mp:
-		return {"type": "skill", "skill": "cure", "targets": [hurt[0]]}
-	if not hurt.is_empty() and Game.inventory.get("hi_potion", 0) > 0:
-		return {"type": "item", "item": "hi_potion", "targets": [hurt[0]]}
-	if b.mp < 12 and Game.inventory.get("ether", 0) > 0:
-		return {"type": "item", "item": "ether", "targets": [b]}
+func _auto_action(b: Battler) -> Dictionary:
+	var hurt := _alive(heroes).filter(func(h: Battler): return h.hp < h.max_hp() * 0.45)
+	var dead := heroes.filter(func(h: Battler): return not h.alive())
+	var foe: Battler = _alive(foes).pick_random()
+	var sk: Dictionary = {}
+	for s in b.skills():
+		sk[s.resource_path.get_file().get_basename()] = s
+	var can := func(id: String) -> bool: return sk.has(id) and b.mp >= sk[id].mp_cost
+	var phoenix := _item("phoenix_down")
+	var hi_potion := _item("hi_potion")
+	var ether := _item("ether")
+	if not dead.is_empty() and can.call("anastasis"):
+		return {"type": "skill", "skill": sk.anastasis, "targets": [dead[0]]}
+	if not dead.is_empty() and phoenix:
+		return {"type": "item", "item": phoenix, "targets": [dead[0]]}
+	if hurt.size() >= 2 and can.call("asclepius_grace"):
+		return {"type": "skill", "skill": sk.asclepius_grace, "targets": _alive(heroes)}
+	if not hurt.is_empty() and can.call("cure"):
+		return {"type": "skill", "skill": sk.cure, "targets": [hurt[0]]}
+	if not hurt.is_empty() and hi_potion:
+		return {"type": "item", "item": hi_potion, "targets": [hurt[0]]}
+	if b.mp < 12 and ether:
+		return {"type": "item", "item": ether, "targets": [b]}
 	if boss:
-		if sk.has("iron_wall") and not b.buffs.has("def") and b.mp >= 8:
-			return {"type": "skill", "skill": "iron_wall", "targets": _alive(heroes)}
-		if sk.has("provoke") and b.provoke <= 0 and b.mp >= 3:
-			return {"type": "skill", "skill": "provoke", "targets": [b]}
-		if sk.has("focus") and not b.buffs.has("mag") and b.mp >= 30:
-			return {"type": "skill", "skill": "focus", "targets": [b]}
-	for s in ["lumina_blade", "holy", "meteor", "earthsplitter", "thunder_slash", "fire", "shield_bash"]:
-		if sk.has(s) and b.mp >= DB.SKILLS[s].mp + 8:
-			var tt: String = DB.SKILLS[s].target
-			return {"type": "skill", "skill": s, "targets": _alive(foes) if tt == "all_enemies" else [foe]}
+		if can.call("iron_wall") and not b.buffs.has("def"):
+			return {"type": "skill", "skill": sk.iron_wall, "targets": _alive(heroes)}
+		if can.call("provoke") and b.provoke <= 0:
+			return {"type": "skill", "skill": sk.provoke, "targets": [b]}
+		if sk.has("athenas_insight") and not b.buffs.has("mag") and b.mp >= 30:
+			return {"type": "skill", "skill": sk.athenas_insight, "targets": [b]}
+	for id in ["lumina_blade", "holy", "meteor", "earthsplitter", "thunder_slash", "fira", "shield_bash"]:
+		if sk.has(id) and b.mp >= sk[id].mp_cost + 8:
+			var s: SkillData = sk[id]
+			return {"type": "skill", "skill": s, "targets": _alive(foes) if s.target == SkillData.Target.ALL_ENEMIES else [foe]}
 	return {"type": "attack", "targets": [foe]}
 
 
+func _item(id: String) -> ItemData:
+	for it in Game.inventory:
+		if it.resource_path.get_file().get_basename() == id:
+			return it
+	return null
+
+
 # ----------------------------------------------------------- Enemy turn ---
-func _enemy_turn(b) -> void:
+func _enemy_turn(b: Battler) -> void:
 	await _wait(0.25)
 	if b.is_boss:
-		await _boss_turn(b)
+		if b.phase == 1 and b.hp <= b.max_hp() / 2 and not _boss_phase_shown:
+			_boss_phase_shown = true
+			await _boss_transform(b)
+		_boss_turns += 1
+		var skill: SkillData
+		if b.charging:
+			b.charging = false
+			skill = preload("res://data/skills/abyssal_ruin.tres")
+		elif b.phase >= 2 and _boss_turns % 4 == 0:
+			b.charging = true
+			skill = preload("res://data/skills/gathering_darkness.tres")
+		else:
+			skill = b.enemy.pick_action()
+		await _execute(b, {"type": "skill", "skill": skill, "targets": _enemy_targets(skill)})
 		return
-	var sid := _weighted(b.data.actions)
-	await _execute(b, {"type": "skill", "skill": sid, "targets": _enemy_targets(sid)})
+	var s := b.enemy.pick_action()
+	await _execute(b, {"type": "skill", "skill": s, "targets": _enemy_targets(s)})
 
 
-func _boss_turn(b) -> void:
-	if b.phase == 1 and b.hp <= b.max_hp() / 2 and not _boss_phase_shown:
-		_boss_phase_shown = true
-		await _boss_transform(b)
-	_boss_turns += 1
-	var sid: String
-	if b.charging:
-		b.charging = false
-		sid = "abyssal_ruin"
-	elif b.phase >= 2 and _boss_turns % 4 == 0:
-		b.charging = true
-		sid = "abyss_charge"
-	else:
-		sid = _weighted(b.data.actions)
-	await _execute(b, {"type": "skill", "skill": sid, "targets": _enemy_targets(sid)})
-
-
-func _boss_transform(b) -> void:
+func _boss_transform(b: Battler) -> void:
 	_show_banner("Malzeth: Enough! Witness my true form!", Color(1.0, 0.45, 0.8))
-	Sfx.play("dark")
+	Audio.play_sfx(&"dark")
 	_shake = 0.8
 	var tw := create_tween()
-	tw.tween_property(b.sprite, "modulate", Color(2.5, 0.6, 2.5), 0.4)
-	tw.tween_property(b.sprite, "modulate", Color(1.3, 0.75, 1.3), 0.6)
-	tw.parallel().tween_property(b.node, "scale", Vector3.ONE * 1.12, 0.6)
-	_burst(b.node.position + Vector3(0, 2.5, 0), Color(0.7, 0.2, 1.0), 80, 3.0)
+	tw.tween_property(b.view.sprite(), "modulate", Color(2.5, 0.6, 2.5), 0.4)
+	tw.tween_property(b.view.sprite(), "modulate", Color(1.3, 0.75, 1.3), 0.6)
+	tw.parallel().tween_property(b.view, "scale", Vector3.ONE * 1.12, 0.6)
+	_spawn(burst_fx, b.view.global_position + Vector3(0, 2.5, 0), Color(0.7, 0.2, 1.0), 3.0)
 	await _wait(1.8)
 	b.phase = 2
 	_hide_banner()
 
 
-func _weighted(list: Array) -> String:
-	var total := 0
-	for a in list:
-		total += a[1]
-	var r := randi() % total
-	for a in list:
-		r -= a[1]
-		if r < 0:
-			return a[0]
-	return list[0][0]
-
-
-func _enemy_targets(sid: String) -> Array:
-	var sk: Dictionary = DB.SKILLS[sid]
+func _enemy_targets(s: SkillData) -> Array:
 	var alive := _alive(heroes)
-	match sk.target:
-		"all_enemies":
+	match s.target:
+		SkillData.Target.ALL_ENEMIES:
 			return alive
-		"self":
+		SkillData.Target.SELF:
 			return []
-	var provokers := alive.filter(func(h): return h.provoke > 0)
+	var provokers := alive.filter(func(h: Battler): return h.provoke > 0)
 	if not provokers.is_empty() and randf() < 0.85:
 		return [provokers[0]]
 	return [alive.pick_random()]
 
 
 # ------------------------------------------------------------- Execute ---
-func _execute(a, action: Dictionary) -> void:
-	var targets: Array = action.get("targets", [])
+func _execute(a: Battler, action: Dictionary) -> void:
+	var targets: Array = []
+	targets.assign(action.get("targets", []))
 	match action.type:
 		"defend":
 			a.defending = true
 			_show_banner("%s defends." % a.display_name)
-			Sfx.play("buff")
-			_burst(a.node.position + Vector3(0, 1.2, 0), Color(0.6, 0.8, 1.0), 20, 1.0)
+			Audio.play_sfx(&"buff")
+			_spawn(burst_fx, a.view.global_position + Vector3(0, 1.2, 0), Color(0.6, 0.8, 1.0), 0.8)
 			await _wait(0.6)
 			_hide_banner()
 		"flee":
 			_show_banner("The party tries to flee...")
 			await _wait(0.6)
 			if randf() < 0.7:
-				Sfx.play("cancel")
+				Audio.play_sfx(&"cancel")
 				_fled = true
 			else:
 				_show_banner("Couldn't escape!")
-				Sfx.play("buzz")
+				Audio.play_sfx(&"buzz")
 				await _wait(0.7)
 			_hide_banner()
 		"attack":
-			await _do_skill(a, "e_attack", _retarget(a, targets, "enemy"), "Attack")
+			await _do_skill(a, preload("res://data/skills/attack.tres"), _retarget(a, targets, true))
 		"skill":
-			var sk: Dictionary = DB.SKILLS[action.skill]
+			var s: SkillData = action.skill
 			if a.is_hero:
-				a.mp -= sk.mp
-			var tt: Array = targets
-			if sk.target in ["enemy", "ally"]:
-				tt = _retarget(a, targets, sk.target)
-			elif sk.target == "all_enemies":
+				a.mp -= s.mp_cost
+			var tt := targets
+			if s.target == SkillData.Target.ENEMY or s.target == SkillData.Target.ALLY:
+				tt = _retarget(a, targets, s.target == SkillData.Target.ENEMY)
+			elif s.target == SkillData.Target.ALL_ENEMIES:
 				tt = _alive(foes) if a.is_hero else _alive(heroes)
-			await _do_skill(a, action.skill, tt, sk.name)
+			await _do_skill(a, s, tt)
 		"item":
-			await _do_item(a, action.item, targets)
+			await _do_item(action.item, targets)
 
 
 ## If a single target died before the action resolved, pick another one.
-func _retarget(a, targets: Array, ttype: String) -> Array:
+func _retarget(a: Battler, targets: Array, hostile: bool) -> Array:
 	if not targets.is_empty() and targets[0].alive():
 		return targets
-	var side: Array
-	if ttype == "enemy":
-		side = foes if a.is_hero else heroes
-	else:
-		side = heroes if a.is_hero else foes
+	var side := (foes if a.is_hero else heroes) if hostile else (heroes if a.is_hero else foes)
 	var alive := _alive(side)
 	return [alive.pick_random()] if not alive.is_empty() else []
 
 
-func _do_skill(a, sid: String, targets: Array, label: String) -> void:
-	var sk: Dictionary = DB.SKILLS[sid]
-	if targets.is_empty() and sk.target != "self":
+func _do_skill(a: Battler, s: SkillData, targets: Array) -> void:
+	if targets.is_empty() and s.target != SkillData.Target.SELF:
 		return
-	var el: String = sk.element
-	var col: Color = DB.ELEMENT_COLORS.get(el, Color.WHITE)
-	if sid != "e_attack":
-		_show_banner(label, col.lerp(Color.WHITE, 0.4))
-	match sk.kind:
-		"phys":
-			await _physical(a, sk, targets)
-		"magic":
+	var col := s.color()
+	if s.resource_path.get_file() != "attack.tres":
+		_show_banner(s.display_name, col.lerp(Color.WHITE, 0.4))
+	match s.kind:
+		SkillData.Kind.PHYSICAL:
+			await _physical(a, s, targets)
+		SkillData.Kind.MAGIC:
 			await _cast_anim(a, col)
-			await _magic_fx(sid, el, targets)
+			await _magic_fx(s, targets)
 			for t in targets:
-				_apply_damage(a, t, sk)
-			if sk.get("drain", false):
+				_apply_damage(a, t, s)
+			if s.drain:
 				await _wait(0.3)
-		"heal":
+		SkillData.Kind.HEAL:
 			await _cast_anim(a, col)
-			Sfx.play("heal")
+			Audio.play_sfx(&"heal")
 			for t in targets:
-				_rise_fx(t, col)
-				var amt := int(sk.power * (a.stat("mag") * 2.0 + 30.0) * randf_range(0.95, 1.05))
+				_spawn(rise_fx, t.view.global_position, col)
+				var amt := int(Game.heal_amount(a.stat("mag"), s) * randf_range(0.95, 1.05))
 				t.hp += amt
 				_popup(t, str(amt), Color(0.5, 1.0, 0.6))
-		"revive":
+		SkillData.Kind.REVIVE:
 			await _cast_anim(a, col)
-			Sfx.play("heal")
+			Audio.play_sfx(&"heal")
 			for t in targets:
 				if not t.alive():
-					t.hp = maxi(1, int(t.max_hp() * sk.power))
+					t.hp = maxi(1, int(t.max_hp() * s.power))
 					_show_ko(t, false)
-					_rise_fx(t, Color(1.0, 0.95, 0.6))
+					_spawn(rise_fx, t.view.global_position, Color(1.0, 0.95, 0.6))
 					_popup(t, "Revived!", Color(1.0, 0.95, 0.6))
-		"buff":
+		SkillData.Kind.BUFF:
 			await _cast_anim(a, col)
-			Sfx.play("buff")
+			Audio.play_sfx(&"buff")
 			for t in targets:
-				for key in ["buff", "buff2"]:
-					if sk.has(key):
-						t.add_buff(sk[key].stat, sk[key].mult, sk[key].turns + (1 if t == a else 0))
-				_rise_fx(t, col)
-				_popup(t, "%s Up" % DB.STAT_NAMES[sk.buff.stat], col)
-		"provoke":
-			Sfx.play("buff")
+				for mod in s.buffs:
+					t.add_modifier(mod, 1 if t == a else 0)
+				_spawn(rise_fx, t.view.global_position, col)
+				_popup(t, "%s Up" % HeroData.STAT_NAMES[s.buffs[0].stat], col)
+		SkillData.Kind.PROVOKE:
+			Audio.play_sfx(&"buff")
 			a.provoke = 4
-			a.add_buff("def", 1.3, 4)
-			_rise_fx(a, Color(1.0, 0.4, 0.3))
+			for mod in s.buffs:
+				a.add_modifier(mod)
+			_spawn(rise_fx, a.view.global_position, Color(1.0, 0.4, 0.3))
 			_popup(a, "Taunt!", Color(1.0, 0.5, 0.4))
-		"debuff":
+		SkillData.Kind.DEBUFF:
 			await _cast_anim(a, col)
-			Sfx.play("dark")
+			Audio.play_sfx(&"dark")
 			for t in targets:
-				t.add_buff(sk.debuff.stat, sk.debuff.mult, sk.debuff.turns)
-				_implode_fx(t.node.position + Vector3(0, 1.2, 0), col)
-				_popup(t, "%s Down" % DB.STAT_NAMES[sk.debuff.stat], Color(0.8, 0.5, 1.0))
-		"charge":
-			Sfx.play("dark")
+				t.add_modifier(s.debuff)
+				_spawn(implode_fx, t.view.global_position + Vector3(0, 1.2, 0), col)
+				_popup(t, "%s Down" % HeroData.STAT_NAMES[s.debuff.stat], Color(0.8, 0.5, 1.0))
+		SkillData.Kind.CHARGE:
+			Audio.play_sfx(&"dark")
 			_shake = 0.4
-			_implode_fx(a.node.position + Vector3(0, 2.5, 0), col, 3.0)
+			_spawn(implode_fx, a.view.global_position + Vector3(0, 2.5, 0), col, 3.0)
 			_show_banner("Malzeth gathers the darkness of the abyss...", Color(0.85, 0.5, 1.0))
 	await _wait(0.75)
 	_hide_banner()
 	_refresh_party()
 
 
-func _physical(a, sk: Dictionary, targets: Array) -> void:
-	var col: Color = DB.ELEMENT_COLORS.get(sk.element, Color.WHITE)
-	var t0 = targets[0]
+func _physical(a: Battler, s: SkillData, targets: Array) -> void:
+	var col := s.color()
 	var dir := -1.0 if a.is_hero else 1.0
-	var dest: Vector3 = t0.node.position + Vector3(-dir * 1.3, 0, 0.05) if targets.size() == 1 else Vector3(0.0, 0, -0.1)
+	var dest: Vector3 = targets[0].view.global_position + Vector3(-dir * 1.3, 0, 0.05) if targets.size() == 1 else Vector3(0, 0, -0.1)
 	if a.is_boss:
 		dest = a.home + Vector3(1.0, 0, 0)
-	if sk.element != "none":
-		a.sprite.modulate = col.lerp(Color.WHITE, 0.3) * 1.8
+	if s.element != SkillData.Element.NONE:
+		a.view.set_tint(col.lerp(Color.WHITE, 0.3) * 1.8)
+	a.view.play_once(&"attack")
 	var tw := create_tween()
-	tw.tween_property(a.node, "position", dest, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(a.view, "global_position", dest, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	_cam_push = Vector3(dir * -0.3, -0.1, -0.6)
 	await tw.finished
 	for t in targets:
-		_slash_fx(t, col)
-		if sk.element != "none":
-			_burst(t.node.position + Vector3(0, 1.2, 0), col, 24, 1.2)
-		_apply_damage(a, t, sk)
+		_spawn(slash_fx, t.view.global_position + Vector3(0, 1.3, 0.4), col)
+		if s.element != SkillData.Element.NONE:
+			_spawn(burst_fx, t.view.global_position + Vector3(0, 1.2, 0), col, 1.2)
+		_apply_damage(a, t, s)
 	await _wait(0.3)
-	a.sprite.modulate = _base_modulate(a)
+	a.view.set_tint(_base_tint(a))
 	var back := create_tween()
-	back.tween_property(a.node, "position", a.home, 0.25).set_trans(Tween.TRANS_QUAD)
+	back.tween_property(a.view, "global_position", a.home, 0.25).set_trans(Tween.TRANS_QUAD)
 	_cam_push = Vector3.ZERO
 	await back.finished
 
 
-func _cast_anim(a, col: Color) -> void:
-	Sfx.play("magic")
-	var circle := MeshInstance3D.new()
-	var q := QuadMesh.new()
-	q.size = Vector2.ONE * 2.2
-	circle.mesh = q
-	circle.rotation_degrees.x = -90
-	circle.position = a.node.position + Vector3(0, 0.06, 0)
-	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	m.albedo_texture = _ring_texture()
-	m.albedo_color = col * 2.0
-	circle.material_override = m
-	add_child(circle)
-	var orig: Color = _base_modulate(a)
+func _cast_anim(a: Battler, col: Color) -> void:
+	Audio.play_sfx(&"magic")
+	a.view.play_once(&"cast")
+	_spawn(cast_circle_fx, a.view.global_position + Vector3(0, 0.06, 0), col)
+	_spawn(rise_fx, a.view.global_position, col, 0.7)
 	var tw := create_tween()
-	tw.tween_property(a.sprite, "modulate", col.lerp(Color.WHITE, 0.5) * 2.2, 0.25)
-	tw.parallel().tween_property(circle, "rotation_degrees:y", 180.0, 0.6)
-	tw.tween_property(a.sprite, "modulate", orig, 0.25)
-	tw.parallel().tween_property(m, "albedo_color:a", 0.0, 0.25)
-	_rise_fx(a, col, 14)
+	tw.tween_property(a.view.sprite(), "modulate", col.lerp(Color.WHITE, 0.5) * 2.2, 0.25)
+	tw.tween_property(a.view.sprite(), "modulate", _base_tint(a), 0.25)
 	await tw.finished
-	circle.queue_free()
 
 
-func _base_modulate(b) -> Color:
-	if b.is_boss and b.phase >= 2:
-		return Color(1.3, 0.75, 1.3)
-	return Color.WHITE
+func _base_tint(b: Battler) -> Color:
+	return Color(1.3, 0.75, 1.3) if b.is_boss and b.phase >= 2 else Color.WHITE
 
 
 # --------------------------------------------------------------- Damage ---
-func _apply_damage(a, t, sk: Dictionary) -> void:
+func _apply_damage(a: Battler, t: Battler, s: SkillData) -> void:
 	if not t.alive():
 		return
-	var phys: bool = sk.kind == "phys"
-	var A: float = a.stat("atk" if phys else "mag")
-	var D: float = t.stat("def" if phys else "mdf")
-	var dmg: float = sk.power * 2.5 * A * A / (A + D)
-	dmg *= randf_range(0.92, 1.08)
+	var phys := s.is_physical()
+	var atk := a.stat("atk" if phys else "mag")
+	var def := t.stat("def" if phys else "mdf")
+	var dmg := s.power * 2.5 * atk * atk / (atk + def) * randf_range(0.92, 1.08)
 	var crit := phys and randf() < 0.08
 	if crit:
 		dmg *= 1.6
-	var el: String = sk.element
-	var weak: bool = t.weak.has(el)
-	var resist: bool = t.resist.has(el)
+	var weak := t.is_weak_to(s.element)
+	var resist := t.resists(s.element)
 	if weak:
 		dmg *= 1.5
 	if resist:
@@ -970,22 +680,22 @@ func _apply_damage(a, t, sk: Dictionary) -> void:
 		dmg *= 0.5
 	var amount := maxi(1, int(dmg))
 	t.hp -= amount
-	if sk.has("debuff") and t.alive() and sk.kind == "phys":
-		t.add_buff(sk.debuff.stat, sk.debuff.mult, sk.debuff.turns)
-	if sk.get("drain", false):
+	if s.debuff and t.alive() and phys:
+		t.add_modifier(s.debuff)
+	if s.drain:
 		a.hp += amount / 2
 		_popup(a, str(amount / 2), Color(0.5, 1.0, 0.6))
-	Sfx.play("crit" if crit else ("slash" if phys else "hit"))
+	Audio.play_sfx(&"crit" if crit else (&"slash" if phys else &"hit"))
 	_hit_flash(t)
 	_shake = maxf(_shake, 0.35 if crit or weak else 0.18)
 	var col := Color.WHITE
 	if crit:
 		col = Color(1.0, 0.9, 0.3)
-	elif not t.is_hero and weak:
+	elif weak:
 		col = Color(1.0, 0.65, 0.25)
 	elif t.is_hero:
 		col = Color(1.0, 0.75, 0.75)
-	_popup(t, str(amount), col, 1.0 if not crit else 1.35)
+	_popup(t, str(amount), col, 1.35 if crit else 1.0)
 	if crit:
 		_popup(t, "CRITICAL", Color(1.0, 0.9, 0.3), 0.6, 0.6)
 	elif weak:
@@ -996,434 +706,141 @@ func _apply_damage(a, t, sk: Dictionary) -> void:
 		_on_down(t)
 
 
-func _on_down(t) -> void:
+func _on_down(t: Battler) -> void:
 	t.buffs.clear()
 	t.provoke = 0
+	Audio.play_sfx(&"death")
 	if t.is_hero:
-		Sfx.play("death")
 		_show_ko(t, true)
 		return
-	Sfx.play("death")
 	var tw := create_tween()
 	tw.tween_interval(0.25)
-	tw.tween_property(t.sprite, "modulate", Color(2.0, 0.4, 2.5, 1.0), 0.15)
-	tw.tween_property(t.sprite, "modulate", Color(0.6, 0.1, 0.8, 0.0), 0.6)
-	tw.parallel().tween_property(t.sprite, "scale", Vector3(1.3, 0.2, 1.0), 0.6)
-	tw.tween_callback(t.node.hide)
-	_burst(t.node.position + Vector3(0, 1.0, 0), Color(0.6, 0.2, 1.0), 40, 1.6)
+	tw.tween_property(t.view.sprite(), "modulate", Color(2.0, 0.4, 2.5, 1.0), 0.15)
+	tw.tween_property(t.view.sprite(), "modulate", Color(0.6, 0.1, 0.8, 0.0), 0.6)
+	tw.parallel().tween_property(t.view.sprite(), "scale", Vector3(1.3, 0.2, 1.0), 0.6)
+	tw.tween_callback(t.view.hide)
+	_spawn(burst_fx, t.view.global_position + Vector3(0, 1.0, 0), Color(0.6, 0.2, 1.0), 1.6)
 
 
-func _show_ko(b, ko: bool) -> void:
-	if ko:
-		b.sprite.modulate = Color(0.55, 0.4, 0.5)
-		b.sprite.scale = Vector3(1.0, 0.7, 1.0)
-		b.sprite.position.y = b.base_y * 0.7
-	else:
-		b.sprite.modulate = Color.WHITE
-		b.sprite.scale = Vector3.ONE
+func _show_ko(b: Battler, ko: bool) -> void:
+	b.view.play(&"ko" if ko else &"idle")
+	b.view.set_tint(KO_TINT if ko else Color.WHITE)
 
 
-func _hit_flash(t) -> void:
-	var orig: Color = Color(0.55, 0.4, 0.5) if not t.alive() and t.is_hero else _base_modulate(t)
-	t.sprite.modulate = Color(4.0, 4.0, 4.0)
-	var tw := create_tween()
+func _hit_flash(t: Battler) -> void:
+	var orig := KO_TINT if not t.alive() and t.is_hero else _base_tint(t)
+	if t.alive():
+		t.view.play_once(&"hurt")
+	t.view.set_tint(Color(4.0, 4.0, 4.0))
 	var k := 1.0 if t.is_hero else -1.0
-	tw.tween_property(t.node, "position", t.home + Vector3(k * 0.25, 0, 0), 0.06)
-	tw.tween_property(t.sprite, "modulate", orig, 0.15)
-	tw.parallel().tween_property(t.node, "position", t.home, 0.2)
+	var tw := create_tween()
+	tw.tween_property(t.view, "global_position", t.home + Vector3(k * 0.25, 0, 0), 0.06)
+	tw.tween_property(t.view.sprite(), "modulate", orig, 0.15)
+	tw.parallel().tween_property(t.view, "global_position", t.home, 0.2)
+
+
+func _popup(t: Battler, text: String, color: Color, text_scale := 1.0, height_offset := 0.0) -> void:
+	var p: DamagePopup = damage_popup.instantiate()
+	p.text = text
+	p.color = color
+	p.text_scale = text_scale
+	%Effects.add_child(p)
+	p.global_position = t.view.global_position + Vector3(randf_range(-0.2, 0.2), t.view.height() * 0.7 + height_offset, 0.5)
 
 
 # ------------------------------------------------------------------ Items ---
-func _do_item(a, id: String, targets: Array) -> void:
-	var it: Dictionary = DB.ITEMS[id]
-	Game.remove_item(id)
-	_show_banner(it.name, Color(0.6, 0.9, 1.0))
-	Sfx.play("heal")
-	if it.target == "all_allies":
+func _do_item(item: ItemData, targets: Array) -> void:
+	Game.remove_item(item)
+	_show_banner(item.display_name, Color(0.6, 0.9, 1.0))
+	Audio.play_sfx(&"heal")
+	if item.target == SkillData.Target.ALL_ALLIES:
 		targets = _alive(heroes)
 	for t in targets:
-		match it.kind:
-			"heal", "heal_all":
+		match item.kind:
+			ItemData.Kind.HEAL, ItemData.Kind.HEAL_PARTY:
 				if t.alive():
-					t.hp += it.amount
-					_popup(t, str(it.amount), Color(0.5, 1.0, 0.6))
-			"mp":
+					t.hp += int(item.amount)
+					_popup(t, str(int(item.amount)), Color(0.5, 1.0, 0.6))
+			ItemData.Kind.RESTORE_MP:
 				if t.alive():
-					t.mp += it.amount
-					_popup(t, str(it.amount), Color(0.5, 0.75, 1.0))
-			"full":
+					t.mp += int(item.amount)
+					_popup(t, str(int(item.amount)), Color(0.5, 0.75, 1.0))
+			ItemData.Kind.FULL_RESTORE:
 				if t.alive():
 					t.hp = t.max_hp()
 					t.mp = t.max_mp()
 					_popup(t, "Full Restore", Color(0.5, 1.0, 0.6))
-			"revive":
+			ItemData.Kind.REVIVE:
 				if not t.alive():
-					t.hp = maxi(1, int(t.max_hp() * it.amount))
+					t.hp = maxi(1, int(t.max_hp() * item.amount))
 					_show_ko(t, false)
 					_popup(t, "Revived!", Color(1.0, 0.95, 0.6))
-		_rise_fx(t, Color(0.5, 1.0, 0.7))
+		_spawn(rise_fx, t.view.global_position, Color(0.5, 1.0, 0.7))
 	await _wait(0.9)
 	_hide_banner()
 
 
 # ---------------------------------------------------------------- Effects ---
-func _popup(t, text: String, color: Color, scale := 1.0, delay := 0.0) -> void:
-	var l := Label3D.new()
-	l.text = text
-	l.font_size = int(64 * scale)
-	l.pixel_size = 0.009
-	l.modulate = color
-	l.outline_size = 16
-	l.outline_modulate = Color(0.05, 0.02, 0.08)
-	l.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	l.no_depth_test = true
-	l.render_priority = 20
-	var h: float = t.sprite.texture.get_height() * t.sprite.pixel_size
-	l.position = t.node.position + Vector3(randf_range(-0.2, 0.2), h * 0.7 + delay, 0.5)
-	add_child(l)
-	l.visible = delay <= 0.0
-	var tw := create_tween()
-	if delay > 0.0:
-		tw.tween_interval(0.05)
-		tw.tween_callback(l.show)
-	tw.tween_property(l, "position:y", l.position.y + 0.9, 0.9).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw.parallel().tween_property(l, "modulate:a", 0.0, 0.5).set_delay(0.6)
-	tw.tween_callback(l.queue_free)
-
-
-func _slash_fx(t, col: Color) -> void:
-	var s := Sprite3D.new()
-	s.texture = PixelArt.slash_arc()
-	s.pixel_size = 0.05
-	s.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	s.modulate = col * 3.0
-	s.flip_h = randf() < 0.5
-	s.flip_v = randf() < 0.5
-	s.no_depth_test = true
-	s.render_priority = 5
-	s.shaded = false
-	s.position = t.node.position + Vector3(0, 1.3, 0.4)
-	add_child(s)
-	var tw := create_tween()
-	tw.tween_property(s, "scale", Vector3.ONE * 1.4, 0.18).from(Vector3.ONE * 0.5)
-	tw.parallel().tween_property(s, "modulate:a", 0.0, 0.25).set_delay(0.08)
-	tw.tween_callback(s.queue_free)
-
-
-func _burst(pos: Vector3, col: Color, amount := 30, size := 1.0) -> void:
-	var p := CPUParticles3D.new()
-	p.position = pos
-	p.one_shot = true
-	p.explosiveness = 0.9
-	p.amount = amount
-	p.lifetime = 0.8
-	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
-	p.emission_sphere_radius = 0.2 * size
-	p.direction = Vector3.UP
-	p.spread = 180.0
-	p.initial_velocity_min = 1.5 * size
-	p.initial_velocity_max = 3.5 * size
-	p.gravity = Vector3(0, -2.0, 0)
-	p.damping_min = 2.0
-	p.damping_max = 4.0
-	p.scale_amount_min = 0.6
-	p.scale_amount_max = 1.4
-	var grad := Gradient.new()
-	grad.set_color(0, Color(col.r * 2.5, col.g * 2.5, col.b * 2.5, 1.0))
-	grad.set_color(1, Color(col.r, col.g, col.b, 0.0))
-	p.color_ramp = grad
-	p.mesh = _spark_mesh(0.16 * size)
-	add_child(p)
-	p.emitting = true
-	_flash_light(pos, col, 4.0 * size)
-	get_tree().create_timer(1.5).timeout.connect(p.queue_free)
-
-
-func _rise_fx(t, col: Color, amount := 24) -> void:
-	var p := CPUParticles3D.new()
-	p.position = t.node.position + Vector3(0, 0.2, 0)
-	p.one_shot = true
-	p.explosiveness = 0.3
-	p.amount = amount
-	p.lifetime = 1.0
-	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_RING
-	p.emission_ring_axis = Vector3.UP
-	p.emission_ring_radius = 0.7
-	p.emission_ring_inner_radius = 0.5
-	p.emission_ring_height = 0.1
-	p.direction = Vector3.UP
-	p.spread = 5.0
-	p.initial_velocity_min = 1.5
-	p.initial_velocity_max = 2.5
-	p.gravity = Vector3.ZERO
-	var grad := Gradient.new()
-	grad.set_color(0, Color(col.r * 2.0, col.g * 2.0, col.b * 2.0, 1.0))
-	grad.set_color(1, Color(col.r, col.g, col.b, 0.0))
-	p.color_ramp = grad
-	p.mesh = _spark_mesh(0.18)
-	add_child(p)
-	p.emitting = true
-	_flash_light(t.node.position + Vector3(0, 1.0, 0), col, 2.5)
-	get_tree().create_timer(1.6).timeout.connect(p.queue_free)
-
-
-func _implode_fx(pos: Vector3, col: Color, size := 1.0) -> void:
-	var p := CPUParticles3D.new()
-	p.position = pos
-	p.one_shot = true
-	p.explosiveness = 0.6
-	p.amount = int(40 * size)
-	p.lifetime = 0.9
-	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE_SURFACE
-	p.emission_sphere_radius = 1.5 * size
-	p.gravity = Vector3.ZERO
-	p.radial_accel_min = -6.0 * size
-	p.radial_accel_max = -4.0 * size
-	var grad := Gradient.new()
-	grad.set_color(0, Color(col.r, col.g, col.b, 0.0))
-	grad.set_color(1, Color(col.r * 2.0, col.g * 2.0, col.b * 2.0, 1.0))
-	p.color_ramp = grad
-	p.mesh = _spark_mesh(0.16)
-	add_child(p)
-	p.emitting = true
-	get_tree().create_timer(1.5).timeout.connect(p.queue_free)
-
-
-func _flash_light(pos: Vector3, col: Color, energy: float) -> void:
-	var l := OmniLight3D.new()
-	l.position = pos
-	l.light_color = col
-	l.light_energy = 0.0
-	l.omni_range = 6.0
-	add_child(l)
-	var tw := create_tween()
-	tw.tween_property(l, "light_energy", energy, 0.06)
-	tw.tween_property(l, "light_energy", 0.0, 0.5)
-	tw.tween_callback(l.queue_free)
-
-
-func _spark_mesh(size: float) -> QuadMesh:
-	var q := QuadMesh.new()
-	q.size = Vector2.ONE * size
-	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	m.vertex_color_use_as_albedo = true
-	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-	m.albedo_texture = PixelArt.sparkle()
-	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	q.material = m
-	return q
-
-
-var _ring: ImageTexture
-func _ring_texture() -> ImageTexture:
-	if _ring:
-		return _ring
-	var n := 64
-	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
-	img.fill(Color(0, 0, 0, 0))
-	var c := Vector2(n / 2.0, n / 2.0)
-	for y in n:
-		for x in n:
-			var v := Vector2(x, y) - c
-			var d := v.length()
-			var a := 0.0
-			if absf(d - 29.0) < 1.5 or absf(d - 22.0) < 1.0:
-				a = 1.0
-			elif d < 22.0:
-				# Hexagram lines
-				var ang := atan2(v.y, v.x)
-				for k in 6:
-					var la := k * PI / 3.0
-					var dist := absf(sin(ang - la)) * d
-					if dist < 0.8 and cos(ang - la) > 0.0:
-						a = 0.8
-			if a > 0.0:
-				img.set_pixel(x, y, Color(1, 1, 1, a))
-	_ring = ImageTexture.create_from_image(img)
-	return _ring
-
-
 ## Element-specific spell visuals.
-func _magic_fx(sid: String, el: String, targets: Array) -> void:
-	var col: Color = DB.ELEMENT_COLORS.get(el, Color.WHITE)
-	match el:
-		"thunder":
+func _magic_fx(s: SkillData, targets: Array) -> void:
+	var col := s.color()
+	match s.element:
+		SkillData.Element.THUNDER:
 			for t in targets:
-				_bolt(t.node.position)
-			Sfx.play("crit")
+				_spawn(bolt_fx, t.view.global_position)
+				_spawn(burst_fx, t.view.global_position + Vector3(0, 0.4, 0), col, 1.2)
+			Audio.play_sfx(&"crit")
 			_shake = 0.3
 			await _wait(0.25)
-		"holy":
+		SkillData.Element.HOLY:
 			for t in targets:
-				_pillar(t.node.position, col)
+				_spawn(holy_pillar_fx, t.view.global_position, col)
 			await _wait(0.5)
 			for t in targets:
-				_burst(t.node.position + Vector3(0, 1.4, 0), col, 50, 1.6)
-		"dark":
+				_spawn(burst_fx, t.view.global_position + Vector3(0, 1.4, 0), col, 1.6)
+		SkillData.Element.DARK:
 			for t in targets:
-				_implode_fx(t.node.position + Vector3(0, 1.2, 0), col)
-			Sfx.play("dark")
+				_spawn(implode_fx, t.view.global_position + Vector3(0, 1.2, 0), col)
+			Audio.play_sfx(&"dark")
 			await _wait(0.55)
 			for t in targets:
-				_burst(t.node.position + Vector3(0, 1.2, 0), col, 30, 1.2)
-			if sid == "abyssal_ruin":
+				_spawn(burst_fx, t.view.global_position + Vector3(0, 1.2, 0), col, 1.2)
+			if s.power >= 1.8:
 				_shake = 1.0
-		"ice":
+		SkillData.Element.ICE:
 			for t in targets:
-				_shards(t.node.position, col)
+				_spawn(ice_shards_fx, t.view.global_position, col)
 			await _wait(0.4)
 			for t in targets:
-				_burst(t.node.position + Vector3(0, 1.2, 0), col, 30, 1.0)
-		"fire":
+				_spawn(burst_fx, t.view.global_position + Vector3(0, 1.2, 0), col)
+		SkillData.Element.FIRE:
 			for t in targets:
-				_flames(t.node.position, col)
+				_spawn(flames_fx, t.view.global_position + Vector3(0, 0.1, 0.2), col)
+				_spawn(flash_light, t.view.global_position + Vector3(0, 1.2, 0.5), col)
+			_shake = 0.25
 			await _wait(0.35)
 			for t in targets:
-				_burst(t.node.position + Vector3(0, 1.0, 0), Color(1.0, 0.8, 0.3), 30, 1.2)
+				_spawn(burst_fx, t.view.global_position + Vector3(0, 1.0, 0), Color(1.0, 0.8, 0.3), 1.2)
 		_:
-			if sid == "meteor":
+			if targets.size() > 1 and s.power >= 1.5:
 				await _meteors(targets)
 			else:
 				for t in targets:
-					_burst(t.node.position + Vector3(0, 1.2, 0), col, 30, 1.2)
+					_spawn(burst_fx, t.view.global_position + Vector3(0, 1.2, 0), col, 1.2)
 				await _wait(0.3)
-
-
-func _bolt(pos: Vector3) -> void:
-	var mi := MeshInstance3D.new()
-	var b := BoxMesh.new()
-	b.size = Vector3(0.1, 9.0, 0.1)
-	mi.mesh = b
-	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.albedo_color = Color(2.2, 2.0, 1.0)
-	mi.material_override = m
-	mi.position = pos + Vector3(0, 4.5, 0)
-	add_child(mi)
-	_flash_light(pos + Vector3(0, 2, 0), Color(1.0, 0.95, 0.5), 8.0)
-	_burst(pos + Vector3(0, 0.4, 0), Color(1.0, 0.92, 0.3), 30, 1.2)
-	var tw := create_tween()
-	tw.tween_callback(mi.hide).set_delay(0.06)
-	tw.tween_callback(mi.show).set_delay(0.06)
-	tw.tween_property(mi, "scale:x", 0.1, 0.2)
-	tw.tween_callback(mi.queue_free)
-
-
-## A roaring column of fire that licks up around the target.
-func _flames(pos: Vector3, col: Color) -> void:
-	var p := CPUParticles3D.new()
-	p.position = pos + Vector3(0, 0.1, 0.2)
-	p.one_shot = true
-	p.explosiveness = 0.2
-	p.amount = 70
-	p.lifetime = 0.9
-	p.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
-	p.emission_sphere_radius = 0.7
-	p.direction = Vector3.UP
-	p.spread = 12.0
-	p.gravity = Vector3(0, 4.0, 0)
-	p.initial_velocity_min = 1.0
-	p.initial_velocity_max = 2.5
-	p.scale_amount_min = 1.0
-	p.scale_amount_max = 2.2
-	var curve := Curve.new()
-	curve.add_point(Vector2(0, 1))
-	curve.add_point(Vector2(1, 0.15))
-	p.scale_amount_curve = curve
-	var grad := Gradient.new()
-	grad.set_color(0, Color(2.5, 2.2, 1.2, 1.0))
-	grad.set_color(1, Color(0.6, 0.1, 0.05, 0.0))
-	grad.add_point(0.35, Color(col.r * 2.0, col.g * 1.5, col.b, 0.9))
-	p.color_ramp = grad
-	var q := QuadMesh.new()
-	q.size = Vector2.ONE * 0.45
-	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	m.vertex_color_use_as_albedo = true
-	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-	m.albedo_texture = PixelArt.soft_circle(16, 1.0)
-	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	q.material = m
-	p.mesh = q
-	add_child(p)
-	p.emitting = true
-	_flash_light(pos + Vector3(0, 1.2, 0.5), col, 6.0)
-	_shake = 0.25
-	get_tree().create_timer(2.0).timeout.connect(p.queue_free)
-
-
-func _pillar(pos: Vector3, col: Color) -> void:
-	var mi := MeshInstance3D.new()
-	var c := CylinderMesh.new()
-	c.top_radius = 0.8
-	c.bottom_radius = 0.8
-	c.height = 10.0
-	mi.mesh = c
-	var m := StandardMaterial3D.new()
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	m.albedo_color = Color(col.r * 1.5, col.g * 1.5, col.b * 1.5, 0.0)
-	mi.material_override = m
-	mi.position = pos + Vector3(0, 5, 0)
-	add_child(mi)
-	_flash_light(pos + Vector3(0, 1.5, 0), col, 6.0)
-	var tw := create_tween()
-	tw.tween_property(m, "albedo_color:a", 0.8, 0.2)
-	tw.parallel().tween_property(mi, "scale", Vector3(0.4, 1, 0.4), 0.6).from(Vector3(1.4, 1, 1.4))
-	tw.tween_property(m, "albedo_color:a", 0.0, 0.3)
-	tw.tween_callback(mi.queue_free)
-
-
-func _shards(pos: Vector3, col: Color) -> void:
-	for i in 6:
-		var mi := MeshInstance3D.new()
-		var pm := PrismMesh.new()
-		pm.size = Vector3(0.3, 1.0, 0.3)
-		mi.mesh = pm
-		var m := Props.color_material(Color(0.7, 0.9, 1.0, 0.85), col, 2.5)
-		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		mi.material_override = m
-		var ang := i * TAU / 6.0
-		var target := pos + Vector3(cos(ang) * 0.5, 0.4, sin(ang) * 0.4)
-		mi.position = target + Vector3(0, 4.0, 0)
-		mi.rotation_degrees = Vector3(180, 0, randf_range(-20, 20))
-		add_child(mi)
-		var tw := create_tween()
-		tw.tween_interval(i * 0.03)
-		tw.tween_property(mi, "position", target, 0.25).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-		tw.tween_interval(0.25)
-		tw.tween_property(mi, "scale", Vector3.ZERO, 0.2)
-		tw.tween_callback(mi.queue_free)
 
 
 func _meteors(targets: Array) -> void:
 	for t in targets:
 		for k in 3:
-			var mi := MeshInstance3D.new()
-			var s := SphereMesh.new()
-			s.radius = 0.35
-			s.height = 0.7
-			mi.mesh = s
-			var m := Props.color_material(Color(1.0, 0.6, 0.3), Color(1.0, 0.5, 0.2), 5.0)
-			mi.material_override = m
-			var dest: Vector3 = t.node.position + Vector3(randf_range(-0.6, 0.6), 0.6, randf_range(-0.4, 0.4))
-			mi.position = dest + Vector3(-4.0, 9.0, -2.0)
-			add_child(mi)
-			var tw := create_tween()
-			tw.tween_interval(k * 0.15 + randf() * 0.1)
-			tw.tween_property(mi, "position", dest, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-			tw.tween_callback(func():
-				_burst(dest, Color(1.0, 0.55, 0.2), 30, 1.3)
-				_shake = 0.4
-				Sfx.play("hit")
-				mi.queue_free())
+			var dest: Vector3 = t.view.global_position + Vector3(randf_range(-0.6, 0.6), 0.6, randf_range(-0.4, 0.4))
+			var delay := k * 0.15 + randf() * 0.1
+			get_tree().create_timer(delay).timeout.connect(func():
+				_spawn(meteor_fx, dest)
+				get_tree().create_timer(0.35).timeout.connect(func():
+					_spawn(burst_fx, dest, Color(1.0, 0.55, 0.2), 1.3)
+					_shake = 0.4
+					Audio.play_sfx(&"hit")))
 	await _wait(0.9)
 
 
@@ -1434,53 +851,42 @@ func _victory() -> void:
 	if boss:
 		finished.emit("win")
 		return
-	Sfx.play_music("victory")
+	Audio.play_music(&"victory")
 	for h in _alive(heroes):
 		var tw := create_tween()
-		tw.tween_property(h.node, "position:y", 0.6, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		tw.tween_property(h.node, "position:y", 0.0, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.tween_property(h.view, "position:y", 0.6, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw.tween_property(h.view, "position:y", 0.0, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	_show_banner("VICTORY!", GOLD)
 	var total_exp := 0
 	var gold := 0
 	for f in foes:
-		total_exp += int(f.data.exp)
-		gold += int(f.data.gold)
+		total_exp += f.enemy.exp_reward
+		gold += f.enemy.gold_reward
 	Game.gold += gold
 	var text := "[center][color=#ffd36a]Victory![/color][/center]\n\nGained [b]%d EXP[/b] and [b]%d Gold[/b].\n" % [total_exp, gold]
-	var lvl := false
+	var leveled := false
 	for h in heroes:
 		for msg in Game.gain_exp(h.member, total_exp):
 			text += "\n[color=#9fe3ff]%s[/color]" % msg
-			lvl = true
-	result_label.text = text
-	result_panel.visible = true
-	if lvl:
-		Sfx.play("levelup")
+			leveled = true
+	%ResultText.text = text
+	%ResultPanel.show()
+	if leveled:
+		Audio.play_sfx(&"levelup")
 	_refresh_party()
 	await _wait(0.5)
-	await _wait_accept()
+	if not auto_battle:
+		_targeting = true
+		while true:
+			var a: String = await _nav
+			if a == "accept" or a == "cancel":
+				break
+		_targeting = false
 	finished.emit("win")
-
-
-func _defeat() -> void:
-	await _wait(0.8)
-	finished.emit("lose")
 
 
 func _end_flee() -> void:
 	for h in _alive(heroes):
-		var tw := create_tween()
-		tw.tween_property(h.node, "position:x", h.home.x + 8.0, 0.5)
+		create_tween().tween_property(h.view, "global_position:x", h.home.x + 8.0, 0.5)
 	await _wait(0.6)
 	finished.emit("flee")
-
-
-func _wait_accept() -> void:
-	if auto_battle:
-		return
-	_targeting = true
-	while true:
-		var a: String = await _nav
-		if a == "accept" or a == "cancel":
-			break
-	_targeting = false

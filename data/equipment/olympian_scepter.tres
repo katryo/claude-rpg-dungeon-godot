@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_7b7tr"]
+[ext_resource type="Resource" path="res://data/heroes/theia.tres" id="2_3mkyo"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_g4x5u"]
+
+[resource]
+script = ExtResource("3_g4x5u")
+display_name = "Olympian Scepter"
+description = "Once wielded by the oracles of Olympus."
+allowed_heroes = Array[ExtResource("1_7b7tr")]([ExtResource("2_3mkyo")])
+mp = 25
+atk = 6
+mag = 24

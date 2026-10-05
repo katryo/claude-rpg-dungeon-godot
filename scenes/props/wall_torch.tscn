@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://resources/materials/torch_holder.tres" id="1_4y0g3"]
+[ext_resource type="PackedScene" path="res://scenes/props/fire.tscn" id="2_qs6u2"]
+[ext_resource type="Script" path="res://scripts/common/fire.gd" id="3_o7b2k"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_b4vj4"]
+size = Vector3(0.12, 0.5, 0.25)
+
+[node name="WallTorch" type="Node3D" unique_id=245592631]
+
+[node name="Holder" type="MeshInstance3D" parent="." unique_id=513147641]
+material_override = ExtResource("1_4y0g3")
+mesh = SubResource("BoxMesh_b4vj4")
+
+[node name="Fire" type="Node3D" parent="." unique_id=739302474 instance=ExtResource("2_qs6u2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0.05)
+script = ExtResource("3_o7b2k")
+size = 0.9
+light_energy = 1.8
+light_range = 6.0

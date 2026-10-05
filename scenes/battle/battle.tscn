@@ -1,0 +1,467 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/battle/battle.gd" id="1_afkbo"]
+[ext_resource type="PackedScene" path="res://scenes/common/character_sprite.tscn" id="2_8h6bs"]
+[ext_resource type="PackedScene" path="res://scenes/fx/burst.tscn" id="3_dsauo"]
+[ext_resource type="PackedScene" path="res://scenes/fx/rise.tscn" id="4_ilhaa"]
+[ext_resource type="PackedScene" path="res://scenes/fx/implode.tscn" id="5_v3sqs"]
+[ext_resource type="PackedScene" path="res://scenes/fx/flames.tscn" id="6_m7fqn"]
+[ext_resource type="PackedScene" path="res://scenes/fx/slash.tscn" id="7_j021e"]
+[ext_resource type="PackedScene" path="res://scenes/fx/bolt.tscn" id="8_eu6pb"]
+[ext_resource type="PackedScene" path="res://scenes/fx/holy_pillar.tscn" id="9_fagrh"]
+[ext_resource type="PackedScene" path="res://scenes/fx/ice_shards.tscn" id="10_pqmvt"]
+[ext_resource type="PackedScene" path="res://scenes/fx/meteor.tscn" id="11_t60p8"]
+[ext_resource type="PackedScene" path="res://scenes/fx/cast_circle.tscn" id="12_kwbff"]
+[ext_resource type="PackedScene" path="res://scenes/fx/damage_popup.tscn" id="13_xg1ve"]
+[ext_resource type="PackedScene" path="res://scenes/fx/target_cursor.tscn" id="14_dgo2i"]
+[ext_resource type="PackedScene" path="res://scenes/fx/flash_light.tscn" id="15_d046s"]
+[ext_resource type="Environment" path="res://resources/environments/boss_environment.tres" id="16_mdvv0"]
+[ext_resource type="CameraAttributesPractical" path="res://resources/environments/boss_camera.tres" id="17_lq6ex"]
+[ext_resource type="Environment" path="res://resources/environments/battle_environment.tres" id="18_03xte"]
+[ext_resource type="CameraAttributesPractical" path="res://resources/environments/battle_camera.tres" id="19_36ceb"]
+[ext_resource type="Material" path="res://resources/materials/stone_floor.tres" id="20_e1v6h"]
+[ext_resource type="Material" path="res://resources/materials/brick_wall.tres" id="21_1cukx"]
+[ext_resource type="Material" path="res://resources/materials/carpet.tres" id="22_wlmsd"]
+[ext_resource type="Material" path="res://resources/materials/carpet_trim.tres" id="23_ikd0n"]
+[ext_resource type="PackedScene" path="res://scenes/props/pillar.tscn" id="24_ikaiy"]
+[ext_resource type="PackedScene" path="res://scenes/props/window.tscn" id="25_futmr"]
+[ext_resource type="Material" path="res://resources/materials/window.tres" id="26_0a3bt"]
+[ext_resource type="PackedScene" path="res://scenes/props/banner.tscn" id="27_q0e5s"]
+[ext_resource type="Material" path="res://resources/materials/banner.tres" id="28_f6obu"]
+[ext_resource type="PackedScene" path="res://scenes/props/brazier.tscn" id="29_1vyfy"]
+[ext_resource type="PackedScene" path="res://scenes/props/dust.tscn" id="30_iqf1n"]
+[ext_resource type="Material" path="res://resources/materials/dust_particle.tres" id="31_dgc11"]
+[ext_resource type="Script" path="res://scripts/common/dust.gd" id="32_fbnxj"]
+[ext_resource type="Material" path="res://resources/materials/throne_dark.tres" id="33_rk1j3"]
+[ext_resource type="Script" path="res://scripts/common/flicker_light.gd" id="34_634ka"]
+[ext_resource type="PackedScene" path="res://scenes/battle/party_row.tscn" id="35_bsmbm"]
+[ext_resource type="Script" path="res://scripts/battle/party_row.gd" id="36_imlgm"]
+[ext_resource type="Script" path="res://scripts/ui/select_list.gd" id="37_waxkx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ejimp"]
+size = Vector3(40, 0.2, 30)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2vwtb"]
+size = Vector3(40, 10, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_twsrk"]
+size = Vector3(40, 0.04, 2.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hrnsn"]
+size = Vector3(40, 0.05, 0.16)
+
+[sub_resource type="BoxMesh" id="BoxMesh_s25p1"]
+size = Vector3(40, 0.05, 0.16)
+
+[sub_resource type="QuadMesh" id="QuadMesh_u5nja"]
+size = Vector2(1.1, 2)
+
+[sub_resource type="QuadMesh" id="QuadMesh_lbfw1"]
+size = Vector2(1, 2.4)
+
+[sub_resource type="Gradient" id="Gradient_mjj4l"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_0m71p"]
+gradient = SubResource("Gradient_mjj4l")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_odevt"]
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0.3, 1, 0)
+spread = 60.0
+initial_velocity_min = 0.05
+initial_velocity_max = 0.25
+gravity = Vector3(0, 0.05, 0)
+scale_min = 0.4
+color_ramp = SubResource("GradientTexture1D_0m71p")
+
+[sub_resource type="QuadMesh" id="QuadMesh_acv1i"]
+size = Vector2(0.07, 0.07)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hg5ly"]
+size = Vector3(2.4, 5, 0.4)
+
+[node name="Battle" type="Node3D" unique_id=340368333]
+script = ExtResource("1_afkbo")
+character_scene = ExtResource("2_8h6bs")
+burst_fx = ExtResource("3_dsauo")
+rise_fx = ExtResource("4_ilhaa")
+implode_fx = ExtResource("5_v3sqs")
+flames_fx = ExtResource("6_m7fqn")
+slash_fx = ExtResource("7_j021e")
+bolt_fx = ExtResource("8_eu6pb")
+holy_pillar_fx = ExtResource("9_fagrh")
+ice_shards_fx = ExtResource("10_pqmvt")
+meteor_fx = ExtResource("11_t60p8")
+cast_circle_fx = ExtResource("12_kwbff")
+damage_popup = ExtResource("13_xg1ve")
+target_cursor = ExtResource("14_dgo2i")
+flash_light = ExtResource("15_d046s")
+boss_environment = ExtResource("16_mdvv0")
+boss_camera_attributes = ExtResource("17_lq6ex")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1983652465]
+unique_name_in_owner = true
+environment = ExtResource("18_03xte")
+camera_attributes = ExtResource("19_36ceb")
+
+[node name="Moonlight" type="DirectionalLight3D" parent="." unique_id=1617330525]
+transform = Transform3D(0.8660254, 0.40957603, -0.28678823, 0, 0.57357645, 0.81915206, 0.5, -0.7094065, 0.49673176, 0, 0, 0)
+light_color = Color(0.6, 0.65, 1, 1)
+light_energy = 0.35
+light_volumetric_fog_energy = 0.6
+shadow_enabled = true
+shadow_blur = 1.5
+directional_shadow_max_distance = 60.0
+
+[node name="Arena" type="Node3D" parent="." unique_id=1237011492]
+
+[node name="Floor" type="MeshInstance3D" parent="Arena" unique_id=1452803317]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+material_override = ExtResource("20_e1v6h")
+mesh = SubResource("BoxMesh_ejimp")
+
+[node name="BackWall" type="MeshInstance3D" parent="Arena" unique_id=416064000]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -6.5)
+material_override = ExtResource("21_1cukx")
+mesh = SubResource("BoxMesh_2vwtb")
+
+[node name="Carpet" type="MeshInstance3D" parent="Arena" unique_id=831746761]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.1)
+material_override = ExtResource("22_wlmsd")
+mesh = SubResource("BoxMesh_twsrk")
+
+[node name="TrimNorth" type="MeshInstance3D" parent="Arena" unique_id=7697448]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, -1.4)
+material_override = ExtResource("23_ikd0n")
+mesh = SubResource("BoxMesh_hrnsn")
+
+[node name="TrimSouth" type="MeshInstance3D" parent="Arena" unique_id=1396653147]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, 1.2)
+material_override = ExtResource("23_ikd0n")
+mesh = SubResource("BoxMesh_s25p1")
+
+[node name="Pillar5" type="StaticBody3D" parent="Arena" unique_id=255315814 instance=ExtResource("24_ikaiy")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, -9, 0, -5.2)
+
+[node name="Pillar6" type="StaticBody3D" parent="Arena" unique_id=1551708166 instance=ExtResource("24_ikaiy")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, -4.5, 0, -5.2)
+
+[node name="Pillar7" type="StaticBody3D" parent="Arena" unique_id=1588048830 instance=ExtResource("24_ikaiy")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 4.5, 0, -5.2)
+
+[node name="Pillar8" type="StaticBody3D" parent="Arena" unique_id=1555439372 instance=ExtResource("24_ikaiy")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 9, 0, -5.2)
+
+[node name="Window9" type="MeshInstance3D" parent="Arena" unique_id=478802810 instance=ExtResource("25_futmr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.75, 4.2, -5.97)
+material_override = ExtResource("26_0a3bt")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Banner10" type="MeshInstance3D" parent="Arena" unique_id=65425243 instance=ExtResource("27_q0e5s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.95, 3, -5.97)
+material_override = ExtResource("28_f6obu")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Banner11" type="MeshInstance3D" parent="Arena" unique_id=1514994542 instance=ExtResource("27_q0e5s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.55, 3, -5.97)
+material_override = ExtResource("28_f6obu")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Window12" type="MeshInstance3D" parent="Arena" unique_id=2017232629 instance=ExtResource("25_futmr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.2, -5.97)
+material_override = ExtResource("26_0a3bt")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Banner13" type="MeshInstance3D" parent="Arena" unique_id=656587831 instance=ExtResource("27_q0e5s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 3, -5.97)
+material_override = ExtResource("28_f6obu")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Banner14" type="MeshInstance3D" parent="Arena" unique_id=1546780887 instance=ExtResource("27_q0e5s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 3, -5.97)
+material_override = ExtResource("28_f6obu")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Window15" type="MeshInstance3D" parent="Arena" unique_id=1434244167 instance=ExtResource("25_futmr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.75, 4.2, -5.97)
+material_override = ExtResource("26_0a3bt")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Banner16" type="MeshInstance3D" parent="Arena" unique_id=304407960 instance=ExtResource("27_q0e5s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.55, 3, -5.97)
+material_override = ExtResource("28_f6obu")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Banner17" type="MeshInstance3D" parent="Arena" unique_id=1403822544 instance=ExtResource("27_q0e5s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.95, 3, -5.97)
+material_override = ExtResource("28_f6obu")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Brazier18" type="StaticBody3D" parent="Arena" unique_id=212653876 instance=ExtResource("29_1vyfy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, -3)
+
+[node name="Brazier19" type="StaticBody3D" parent="Arena" unique_id=1199653945 instance=ExtResource("29_1vyfy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, -3)
+
+[node name="Brazier20" type="StaticBody3D" parent="Arena" unique_id=1231642343 instance=ExtResource("29_1vyfy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 0, -4.5)
+
+[node name="Brazier21" type="StaticBody3D" parent="Arena" unique_id=1170596348 instance=ExtResource("29_1vyfy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 0, -4.5)
+
+[node name="FillLight" type="OmniLight3D" parent="Arena" unique_id=886376086]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 4)
+light_color = Color(1, 0.85, 0.7, 1)
+light_energy = 1.2
+omni_range = 12.0
+
+[node name="Dust" type="GPUParticles3D" parent="Arena" unique_id=1121255567 instance=ExtResource("30_iqf1n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+material_override = ExtResource("31_dgc11")
+amount = 160
+lifetime = 7.0
+preprocess = 7.0
+process_material = SubResource("ParticleProcessMaterial_odevt")
+draw_pass_1 = SubResource("QuadMesh_acv1i")
+script = ExtResource("32_fbnxj")
+extents = Vector3(12, 4, 6)
+
+[node name="BossDecor" type="Node3D" parent="." unique_id=273599407]
+unique_name_in_owner = true
+visible = false
+
+[node name="ThroneBack" type="MeshInstance3D" parent="BossDecor" unique_id=105384083]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2.5, -5.6)
+material_override = ExtResource("33_rk1j3")
+mesh = SubResource("BoxMesh_hg5ly")
+
+[node name="Aura" type="OmniLight3D" parent="BossDecor" unique_id=1497706183]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3, -2)
+light_color = Color(0.7, 0.15, 1, 1)
+light_volumetric_fog_energy = 3.0
+omni_range = 10.0
+script = ExtResource("34_634ka")
+base_energy = 4.0
+
+[node name="DarkMotes" type="GPUParticles3D" parent="BossDecor" unique_id=1904383772 instance=ExtResource("30_iqf1n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2, -1)
+material_override = ExtResource("31_dgc11")
+amount = 120
+lifetime = 7.0
+preprocess = 7.0
+process_material = SubResource("ParticleProcessMaterial_odevt")
+draw_pass_1 = SubResource("QuadMesh_acv1i")
+script = ExtResource("32_fbnxj")
+extents = Vector3(3, 3, 2)
+color = Color(0.7, 0.3, 1, 0.8)
+
+[node name="Camera" type="Camera3D" parent="." unique_id=1685646855]
+unique_name_in_owner = true
+transform = Transform3D(0.9997831, -0.004785326, 0.020271659, 0, 0.9732508, 0.22974548, -0.020828813, -0.22969565, 0.9730396, 0.3, 3.9, 13.8)
+current = true
+fov = 36.0
+
+[node name="CameraTarget" type="Marker3D" parent="." unique_id=1362521335]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.6)
+
+[node name="HeroSlots" type="Node3D" parent="." unique_id=458704589]
+unique_name_in_owner = true
+
+[node name="Hero0" type="Marker3D" parent="HeroSlots" unique_id=1244392388]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -2)
+
+[node name="Hero1" type="Marker3D" parent="HeroSlots" unique_id=1367470466]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9, 0, -0.3)
+
+[node name="Hero2" type="Marker3D" parent="HeroSlots" unique_id=463148426]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 0, 1.4)
+
+[node name="EnemyLayouts" type="Node3D" parent="." unique_id=166344690]
+unique_name_in_owner = true
+
+[node name="One" type="Node3D" parent="EnemyLayouts" unique_id=1260169509]
+
+[node name="Slot0" type="Marker3D" parent="EnemyLayouts/One" unique_id=2076036395]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4, 0, -0.1)
+
+[node name="Two" type="Node3D" parent="EnemyLayouts" unique_id=2051200529]
+
+[node name="Slot0" type="Marker3D" parent="EnemyLayouts/Two" unique_id=2037567834]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 0, -0.9)
+
+[node name="Slot1" type="Marker3D" parent="EnemyLayouts/Two" unique_id=368405659]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 0, 0.7)
+
+[node name="Three" type="Node3D" parent="EnemyLayouts" unique_id=999284343]
+
+[node name="Slot0" type="Marker3D" parent="EnemyLayouts/Three" unique_id=1348111478]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, 0, -2)
+
+[node name="Slot1" type="Marker3D" parent="EnemyLayouts/Three" unique_id=840081859]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 0, 0.9)
+
+[node name="Slot2" type="Marker3D" parent="EnemyLayouts/Three" unique_id=337417853]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0, 0.3)
+
+[node name="Boss" type="Node3D" parent="EnemyLayouts" unique_id=1137003687]
+
+[node name="Slot0" type="Marker3D" parent="EnemyLayouts/Boss" unique_id=1557497885]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, 0, -0.9)
+
+[node name="Battlers" type="Node3D" parent="." unique_id=553902107]
+unique_name_in_owner = true
+
+[node name="Effects" type="Node3D" parent="." unique_id=172556054]
+unique_name_in_owner = true
+
+[node name="BattleUI" type="CanvasLayer" parent="." unique_id=601233962]
+layer = 5
+
+[node name="Root" type="Control" parent="BattleUI" unique_id=1800008626]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="PartyPanel" type="PanelContainer" parent="BattleUI/Root" unique_id=1434391024]
+custom_minimum_size = Vector2(680, 172)
+layout_mode = 0
+offset_left = 560.0
+offset_top = 520.0
+offset_right = 1240.0
+offset_bottom = 692.0
+
+[node name="PartyRows" type="VBoxContainer" parent="BattleUI/Root/PartyPanel" unique_id=163333113]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Row0" type="HBoxContainer" parent="BattleUI/Root/PartyPanel/PartyRows" unique_id=1832993356 instance=ExtResource("35_bsmbm")]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_constants/separation = 14
+script = ExtResource("36_imlgm")
+
+[node name="Row1" type="HBoxContainer" parent="BattleUI/Root/PartyPanel/PartyRows" unique_id=758184988 instance=ExtResource("35_bsmbm")]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_constants/separation = 14
+script = ExtResource("36_imlgm")
+
+[node name="Row2" type="HBoxContainer" parent="BattleUI/Root/PartyPanel/PartyRows" unique_id=369252875 instance=ExtResource("35_bsmbm")]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_constants/separation = 14
+script = ExtResource("36_imlgm")
+
+[node name="CommandPanel" type="PanelContainer" parent="BattleUI/Root" unique_id=49713256]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(250, 200)
+layout_mode = 0
+offset_left = 40.0
+offset_top = 492.0
+offset_right = 290.0
+offset_bottom = 692.0
+
+[node name="CommandList" type="VBoxContainer" parent="BattleUI/Root/CommandPanel" unique_id=1100552591]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("37_waxkx")
+allow_cancel = false
+
+[node name="SkillPanel" type="PanelContainer" parent="BattleUI/Root" unique_id=1387787687]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 392)
+layout_mode = 0
+offset_left = 300.0
+offset_top = 300.0
+offset_right = 720.0
+offset_bottom = 692.0
+
+[node name="VBox" type="VBoxContainer" parent="BattleUI/Root/SkillPanel" unique_id=2050723576]
+layout_mode = 2
+
+[node name="SkillTitle" type="Label" parent="BattleUI/Root/SkillPanel/VBox" unique_id=1890535568]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "Skills"
+
+[node name="SkillList" type="VBoxContainer" parent="BattleUI/Root/SkillPanel/VBox" unique_id=612327048]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("37_waxkx")
+max_rows = 9
+
+[node name="Banner" type="PanelContainer" parent="BattleUI/Root" unique_id=1402357472]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -330.0
+offset_top = 100.0
+offset_right = 330.0
+grow_horizontal = 2
+
+[node name="BannerLabel" type="Label" parent="BattleUI/Root/Banner" unique_id=1942847765]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
+[node name="InfoPanel" type="PanelContainer" parent="BattleUI/Root" unique_id=1045296642]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(520, 60)
+layout_mode = 0
+offset_left = 40.0
+offset_top = 28.0
+offset_right = 560.0
+offset_bottom = 88.0
+
+[node name="InfoLabel" type="Label" parent="BattleUI/Root/InfoPanel" unique_id=2069604979]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="TurnPanel" type="PanelContainer" parent="BattleUI/Root" unique_id=1836034400]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_top = 28.0
+offset_right = -40.0
+grow_horizontal = 0
+theme_type_variation = &"StripPanel"
+
+[node name="HBox" type="HBoxContainer" parent="BattleUI/Root/TurnPanel" unique_id=427804431]
+layout_mode = 2
+
+[node name="TurnLabel" type="Label" parent="BattleUI/Root/TurnPanel/HBox" unique_id=1735127554]
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+theme_override_font_sizes/font_size = 14
+text = "TURN"
+
+[node name="TurnStrip" type="HBoxContainer" parent="BattleUI/Root/TurnPanel/HBox" unique_id=1598012879]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ResultPanel" type="PanelContainer" parent="BattleUI/Root" unique_id=312734011]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(600, 300)
+layout_mode = 0
+offset_left = 340.0
+offset_top = 170.0
+offset_right = 940.0
+offset_bottom = 470.0
+
+[node name="ResultText" type="RichTextLabel" parent="BattleUI/Root/ResultPanel" unique_id=1127588177]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true

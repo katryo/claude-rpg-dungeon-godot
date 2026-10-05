@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="1_swkfo"]
+[ext_resource type="Script" path="res://scripts/resources/skill_data.gd" id="2_1y5c8"]
+
+[resource]
+script = ExtResource("2_1y5c8")
+display_name = "Asclepius' Grace"
+description = "The healing light of Asclepius restores HP to the whole party."
+mp_cost = 12
+kind = 2
+element = 6
+power = 0.75
+target = 3
+usable_in_field = true

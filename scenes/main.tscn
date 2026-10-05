@@ -1,6 +1,30 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_eb6dy"]
+[ext_resource type="PackedScene" path="res://scenes/screens/title_screen.tscn" id="2_trceg"]
+[ext_resource type="PackedScene" path="res://scenes/field/castle.tscn" id="3_a8y0u"]
+[ext_resource type="PackedScene" path="res://scenes/battle/battle.tscn" id="4_jkv2x"]
+[ext_resource type="PackedScene" path="res://scenes/screens/ending_screen.tscn" id="5_jbj1t"]
+[ext_resource type="PackedScene" path="res://scenes/screens/game_over_screen.tscn" id="6_muem4"]
+[ext_resource type="Resource" path="res://data/heroes/arlen.tres" id="7_dp3eg"]
+[ext_resource type="Resource" path="res://data/heroes/garrick.tres" id="8_0ld40"]
+[ext_resource type="Resource" path="res://data/heroes/theia.tres" id="9_gqmmt"]
+[ext_resource type="Texture2D" path="res://assets/sprites/portraits/dark_lord.png" id="10_yc10j"]
+[ext_resource type="PackedScene" path="res://scenes/ui/party_menu.tscn" id="11_jscy8"]
+[ext_resource type="Script" path="res://scripts/ui/party_menu.gd" id="12_pm3ni"]
 
-[node name="Main" type="Node"]
-script = ExtResource("1_main")
+[node name="Main" type="Node" unique_id=1728276606]
+script = ExtResource("1_eb6dy")
+title_scene = ExtResource("2_trceg")
+castle_scene = ExtResource("3_a8y0u")
+battle_scene = ExtResource("4_jkv2x")
+ending_scene = ExtResource("5_jbj1t")
+game_over_scene = ExtResource("6_muem4")
+arlen = ExtResource("7_dp3eg")
+garrick = ExtResource("8_0ld40")
+theia = ExtResource("9_gqmmt")
+dark_lord_portrait = ExtResource("10_yc10j")
+
+[node name="PartyMenu" type="CanvasLayer" parent="." unique_id=1271218557 instance=ExtResource("11_jscy8")]
+layer = 10
+script = ExtResource("12_pm3ni")

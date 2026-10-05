@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="1_6vxqa"]
+[ext_resource type="Script" path="res://scripts/resources/skill_data.gd" id="2_8s0dc"]
+
+[resource]
+script = ExtResource("2_8s0dc")
+display_name = "Lumina Blade"
+description = "The secret art of the spellblade. Massive holy damage to one foe."
+mp_cost = 20
+element = 4
+power = 2.7

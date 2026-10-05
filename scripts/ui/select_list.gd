@@ -1,9 +1,18 @@
+class_name SelectList
 extends VBoxContainer
-## Keyboard / gamepad / mouse driven cursor list. Items are dictionaries:
-## {text, right?, enabled?, color?}. Emits `done(index)` (-1 when cancelled).
+## Keyboard / gamepad / mouse driven cursor list. Rows are instances of
+## `row_scene` (which must have Cursor, Text and Right labels).
+## Items are dictionaries: {text, right?, enabled?, color?}.
 
-signal done(index: int)
+signal done(index: int)   ## -1 when cancelled
 signal moved(index: int)
+
+const TEXT_COLOR := Color(0.95, 0.93, 0.88)
+const DISABLED_COLOR := Color(0.5, 0.5, 0.55)
+
+@export var row_scene: PackedScene = preload("res://scenes/ui/select_row.tscn")
+@export var max_rows := 8
+@export var allow_cancel := true
 
 var items: Array = []
 var index := 0
@@ -11,16 +20,9 @@ var active := false:
 	set(v):
 		active = v
 		_refresh()
-var allow_cancel := true
-var max_rows := 8
-var row_height := 34.0
 
 var _scroll := 0
-var _rows: Array = []
-
-
-func _init() -> void:
-	add_theme_constant_override("separation", 2)
+var _rows: Array[Control] = []
 
 
 func set_items(new_items: Array, keep_index := false) -> void:
@@ -32,13 +34,7 @@ func set_items(new_items: Array, keep_index := false) -> void:
 	_rebuild()
 
 
-func current() -> Dictionary:
-	if index < items.size():
-		return items[index]
-	return {}
-
-
-## Activate the list and wait for a choice. Returns the index or -1 on cancel.
+## Activate the list and wait for a choice. Returns the index, or -1 on cancel.
 func choose() -> int:
 	active = true
 	var r: int = await done
@@ -47,29 +43,15 @@ func choose() -> int:
 
 
 func _rebuild() -> void:
-	for c in get_children():
+	for c in _rows:
 		c.queue_free()
 	_rows.clear()
-	var count := mini(items.size(), max_rows)
-	for i in count:
-		var row := HBoxContainer.new()
-		row.custom_minimum_size = Vector2(0, row_height)
-		row.mouse_filter = Control.MOUSE_FILTER_STOP
-		var cur := Label.new()
-		cur.custom_minimum_size = Vector2(22, 0)
-		cur.add_theme_color_override("font_color", Color(1.0, 0.85, 0.4))
-		var txt := Label.new()
-		txt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		txt.clip_text = true
-		var right := Label.new()
-		right.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		row.add_child(cur)
-		row.add_child(txt)
-		row.add_child(right)
+	for i in mini(items.size(), max_rows):
+		var row: Control = row_scene.instantiate()
 		row.gui_input.connect(_on_row_input.bind(i))
 		row.mouse_entered.connect(_on_row_hover.bind(i))
 		add_child(row)
-		_rows.append([row, cur, txt, right])
+		_rows.append(row)
 	_refresh()
 
 
@@ -79,34 +61,35 @@ func _refresh() -> void:
 	elif index >= _scroll + max_rows:
 		_scroll = index - max_rows + 1
 	for i in _rows.size():
+		var row := _rows[i]
 		var item_idx := _scroll + i
-		var r: Array = _rows[i]
 		if item_idx >= items.size():
-			r[0].visible = false
+			row.hide()
 			continue
-		r[0].visible = true
+		row.show()
 		var it: Dictionary = items[item_idx]
-		var enabled: bool = it.get("enabled", true)
-		r[2].text = it.get("text", "")
-		r[3].text = it.get("right", "")
-		var col: Color = it.get("color", Color(0.95, 0.93, 0.88))
-		if not enabled:
-			col = Color(0.5, 0.5, 0.55)
-		r[2].add_theme_color_override("font_color", col)
-		r[3].add_theme_color_override("font_color", col)
-		var sel := item_idx == index
-		r[1].text = "▶" if sel and active else ("▷" if sel else "")
-		if i == 0 and _scroll > 0:
-			r[1].text = "▲" if not sel else r[1].text
-		if i == _rows.size() - 1 and _scroll + max_rows < items.size():
-			r[1].text = "▼" if not sel else r[1].text
+		var col: Color = it.get("color", TEXT_COLOR) if it.get("enabled", true) else DISABLED_COLOR
+		var text: Label = row.get_node("Text")
+		var right: Label = row.get_node("Right")
+		text.text = it.get("text", "")
+		right.text = it.get("right", "")
+		text.add_theme_color_override("font_color", col)
+		right.add_theme_color_override("font_color", col)
+		var cursor := ""
+		if item_idx == index:
+			cursor = "▶" if active else "▷"
+		elif i == 0 and _scroll > 0:
+			cursor = "▲"
+		elif i == _rows.size() - 1 and _scroll + max_rows < items.size():
+			cursor = "▼"
+		row.get_node("Cursor").text = cursor
 
 
 func _move(d: int) -> void:
 	if items.is_empty():
 		return
 	index = wrapi(index + d, 0, items.size())
-	Sfx.play("cursor")
+	Audio.play_sfx(&"cursor")
 	_refresh()
 	moved.emit(index)
 
@@ -115,9 +98,9 @@ func _accept() -> void:
 	if items.is_empty():
 		return
 	if not items[index].get("enabled", true):
-		Sfx.play("buzz")
+		Audio.play_sfx(&"buzz")
 		return
-	Sfx.play("confirm")
+	Audio.play_sfx(&"confirm")
 	done.emit(index)
 
 
@@ -125,37 +108,35 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not active or not is_visible_in_tree():
 		return
 	if event.is_action_pressed("ui_up", true):
+		get_viewport().set_input_as_handled()
 		_move(-1)
 	elif event.is_action_pressed("ui_down", true):
+		get_viewport().set_input_as_handled()
 		_move(1)
 	elif event.is_action_pressed("ui_accept"):
 		get_viewport().set_input_as_handled()
 		_accept()
-		return
 	elif event.is_action_pressed("ui_cancel") and allow_cancel:
 		get_viewport().set_input_as_handled()
-		Sfx.play("cancel")
+		Audio.play_sfx(&"cancel")
 		done.emit(-1)
-		return
-	else:
-		return
-	get_viewport().set_input_as_handled()
 
 
 func _on_row_input(event: InputEvent, row: int) -> void:
-	if not active:
+	if not active or not event is InputEventMouseButton or not event.pressed:
 		return
-	if event is InputEventMouseButton and event.pressed:
-		if event.button_index == MOUSE_BUTTON_LEFT:
+	match event.button_index:
+		MOUSE_BUTTON_LEFT:
 			index = _scroll + row
 			_refresh()
 			_accept()
-		elif event.button_index == MOUSE_BUTTON_RIGHT and allow_cancel:
-			Sfx.play("cancel")
-			done.emit(-1)
-		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		MOUSE_BUTTON_RIGHT:
+			if allow_cancel:
+				Audio.play_sfx(&"cancel")
+				done.emit(-1)
+		MOUSE_BUTTON_WHEEL_DOWN:
 			_move(1)
-		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
+		MOUSE_BUTTON_WHEEL_UP:
 			_move(-1)
 
 

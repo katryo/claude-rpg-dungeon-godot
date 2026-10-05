@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_sg7em"]
+
+[resource]
+script = ExtResource("1_sg7em")
+display_name = "Phoenix Down"
+description = "Revives a fallen ally with 30% HP."
+kind = 2
+amount = 0.3
+target = 5

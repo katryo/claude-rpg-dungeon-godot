@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_ef6xc"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="2_eotob"]
+
+[resource]
+script = ExtResource("2_eotob")
+display_name = "Power Ring"
+description = "Strength flows from the ruby set within."
+slot = 3
+atk = 10

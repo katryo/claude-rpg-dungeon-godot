@@ -1,0 +1,57 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://resources/materials/iron.tres" id="1_j7soe"]
+[ext_resource type="Material" path="res://resources/materials/gold.tres" id="2_kucef"]
+[ext_resource type="Material" path="res://resources/materials/coals.tres" id="3_mml07"]
+[ext_resource type="PackedScene" path="res://scenes/props/fire.tscn" id="4_i6nrq"]
+[ext_resource type="Script" path="res://scripts/common/fire.gd" id="5_mkc0o"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_4d6hs"]
+height = 1.4
+radius = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_71am1"]
+top_radius = 0.08
+bottom_radius = 0.18
+height = 1.0
+radial_segments = 16
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_15dj4"]
+top_radius = 0.42
+bottom_radius = 0.2
+height = 0.3
+radial_segments = 16
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7wwj2"]
+top_radius = 0.36
+bottom_radius = 0.36
+height = 0.05
+radial_segments = 16
+
+[node name="Brazier" type="StaticBody3D" unique_id=212653876]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=293341787]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+shape = SubResource("CylinderShape3D_4d6hs")
+
+[node name="Stand" type="MeshInstance3D" parent="." unique_id=572586995]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+material_override = ExtResource("1_j7soe")
+mesh = SubResource("CylinderMesh_71am1")
+
+[node name="Bowl" type="MeshInstance3D" parent="." unique_id=824239362]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+material_override = ExtResource("2_kucef")
+mesh = SubResource("CylinderMesh_15dj4")
+
+[node name="Coals" type="MeshInstance3D" parent="." unique_id=1488103105]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+material_override = ExtResource("3_mml07")
+mesh = SubResource("CylinderMesh_7wwj2")
+
+[node name="Fire" type="Node3D" parent="." unique_id=739302474 instance=ExtResource("4_i6nrq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+script = ExtResource("5_mkc0o")
+size = 1.6
+light_energy = 3.2
+light_range = 8.0

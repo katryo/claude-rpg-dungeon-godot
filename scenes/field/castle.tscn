@@ -1,0 +1,630 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/field/castle.gd" id="1_vrr0w"]
+[ext_resource type="Environment" path="res://resources/environments/castle_environment.tres" id="2_1s1lu"]
+[ext_resource type="CameraAttributesPractical" path="res://resources/environments/castle_camera.tres" id="3_ctrmh"]
+[ext_resource type="MeshLibrary" path="res://resources/tiles/castle_tiles.tres" id="4_76lyy"]
+[ext_resource type="PackedScene" path="res://scenes/props/pillar.tscn" id="5_qltbj"]
+[ext_resource type="PackedScene" path="res://scenes/props/brazier.tscn" id="6_0d5rf"]
+[ext_resource type="PackedScene" path="res://scenes/props/wall_torch.tscn" id="7_yqioc"]
+[ext_resource type="PackedScene" path="res://scenes/props/banner.tscn" id="8_q336c"]
+[ext_resource type="Material" path="res://resources/materials/banner.tres" id="9_eyywo"]
+[ext_resource type="PackedScene" path="res://scenes/props/window.tscn" id="10_2ivqu"]
+[ext_resource type="Material" path="res://resources/materials/window.tres" id="11_0hhbd"]
+[ext_resource type="PackedScene" path="res://scenes/field/chest.tscn" id="12_dqjyl"]
+[ext_resource type="Script" path="res://scripts/field/chest.gd" id="13_mj0u5"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="14_lwgte"]
+[ext_resource type="Resource" path="res://data/equipment/olympian_scepter.tres" id="15_oe3wp"]
+[ext_resource type="Resource" path="res://data/equipment/starlight_blade.tres" id="16_6sxv0"]
+[ext_resource type="Resource" path="res://data/equipment/bastion_blade.tres" id="17_xllc5"]
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="18_xdnlc"]
+[ext_resource type="Resource" path="res://data/items/hi_potion.tres" id="19_c1nv1"]
+[ext_resource type="Resource" path="res://data/items/elixir.tres" id="20_ogro4"]
+[ext_resource type="Resource" path="res://data/equipment/guardian_charm.tres" id="21_ubhp5"]
+[ext_resource type="Resource" path="res://data/equipment/mythril_helm.tres" id="22_h78u1"]
+[ext_resource type="Resource" path="res://data/items/ether.tres" id="23_1vdt7"]
+[ext_resource type="Resource" path="res://data/equipment/titan_plate.tres" id="24_ul5k7"]
+[ext_resource type="Resource" path="res://data/equipment/power_ring.tres" id="25_24p46"]
+[ext_resource type="Resource" path="res://data/equipment/sage_pendant.tres" id="26_k174p"]
+[ext_resource type="Resource" path="res://data/equipment/aegis_cuirass.tres" id="27_a2qe4"]
+[ext_resource type="Resource" path="res://data/equipment/circlet_of_muses.tres" id="28_1l2l1"]
+[ext_resource type="Resource" path="res://data/equipment/hermes_sandals.tres" id="29_t3b6w"]
+[ext_resource type="Resource" path="res://data/items/phoenix_down.tres" id="30_i1vh1"]
+[ext_resource type="Resource" path="res://data/items/ambrosia.tres" id="31_ydcvm"]
+[ext_resource type="PackedScene" path="res://scenes/field/field_enemy.tscn" id="32_cynic"]
+[ext_resource type="Script" path="res://scripts/field/field_enemy.gd" id="33_yc676"]
+[ext_resource type="Script" path="res://scripts/resources/enemy_data.gd" id="34_ma78b"]
+[ext_resource type="Resource" path="res://data/enemies/armor.tres" id="35_gqdw2"]
+[ext_resource type="Resource" path="res://data/enemies/sorcerer.tres" id="36_43wtb"]
+[ext_resource type="Resource" path="res://data/enemies/gargoyle.tres" id="37_52g41"]
+[ext_resource type="Resource" path="res://data/enemies/hellhound.tres" id="38_glcr0"]
+[ext_resource type="Resource" path="res://data/enemies/skeleton.tres" id="39_rgsk1"]
+[ext_resource type="PackedScene" path="res://scenes/field/throne.tscn" id="40_1s8oo"]
+[ext_resource type="PackedScene" path="res://scenes/field/save_crystal.tscn" id="41_c2pdq"]
+[ext_resource type="Script" path="res://scripts/field/save_crystal.gd" id="42_acr5s"]
+[ext_resource type="PackedScene" path="res://scenes/field/player.tscn" id="43_sc8ty"]
+[ext_resource type="Script" path="res://scripts/field/player.gd" id="44_abndp"]
+[ext_resource type="PackedScene" path="res://scenes/field/follower.tscn" id="45_c38e1"]
+[ext_resource type="Script" path="res://scripts/field/follower.gd" id="46_hnlvn"]
+[ext_resource type="Script" path="res://scripts/field/field_camera.gd" id="47_tsybj"]
+[ext_resource type="PackedScene" path="res://scenes/props/dust.tscn" id="48_1ml5x"]
+[ext_resource type="Material" path="res://resources/materials/dust_particle.tres" id="49_4dia1"]
+[ext_resource type="Script" path="res://scripts/common/dust.gd" id="50_xel3u"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_lbfw1"]
+size = Vector2(1, 2.4)
+
+[sub_resource type="QuadMesh" id="QuadMesh_u5nja"]
+size = Vector2(1.1, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_8sotw"]
+size = Vector3(22, 2, 6)
+
+[sub_resource type="Gradient" id="Gradient_mjj4l"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_0m71p"]
+gradient = SubResource("Gradient_mjj4l")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_odevt"]
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0.3, 1, 0)
+spread = 60.0
+initial_velocity_min = 0.05
+initial_velocity_max = 0.25
+gravity = Vector3(0, 0.05, 0)
+scale_min = 0.4
+color_ramp = SubResource("GradientTexture1D_0m71p")
+
+[sub_resource type="QuadMesh" id="QuadMesh_acv1i"]
+size = Vector2(0.07, 0.07)
+
+[sub_resource type="Animation" id="Animation_6a4bp"]
+length = 4.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Root/LocationLabel:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3, 4.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [1.0, 1.0, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gufxf"]
+_data = {
+&"show_location": SubResource("Animation_6a4bp")
+}
+
+[node name="Castle" type="Node3D" unique_id=1721467662]
+script = ExtResource("1_vrr0w")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1520009805]
+unique_name_in_owner = true
+environment = ExtResource("2_1s1lu")
+camera_attributes = ExtResource("3_ctrmh")
+
+[node name="Moonlight" type="DirectionalLight3D" parent="." unique_id=845965551]
+transform = Transform3D(0.8660254, 0.40957603, -0.28678823, 0, 0.57357645, 0.81915206, 0.5, -0.7094065, 0.49673176, 0, 0, 0)
+light_color = Color(0.6, 0.65, 1, 1)
+light_energy = 0.4
+light_volumetric_fog_energy = 0.6
+shadow_enabled = true
+shadow_blur = 1.5
+directional_shadow_max_distance = 60.0
+
+[node name="GridMap" type="GridMap" parent="." unique_id=989242097]
+unique_name_in_owner = true
+mesh_library = ExtResource("4_76lyy")
+cell_size = Vector3(2, 1, 2)
+cell_center_y = false
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(11, 1, 1, 12, 1, 1, 13, 1, 1, 14, 1, 1, 15, 1, 1, 16, 1, 1, 17, 1, 1, 18, 1, 1, 19, 1, 1, 20, 1, 1, 21, 1, 1, 22, 1, 1, 23, 1, 1, 11, 2, 1, 12, 2, 0, 13, 2, 0, 14, 2, 0, 15, 2, 4, 16, 2, 3, 17, 2, 3, 18, 2, 3, 19, 2, 5, 20, 2, 0, 21, 2, 0, 22, 2, 0, 23, 2, 1, 11, 3, 1, 12, 3, 0, 13, 3, 0, 14, 3, 0, 15, 3, 0, 16, 3, 4, 17, 3, 3, 18, 3, 5, 19, 3, 0, 20, 3, 0, 21, 3, 0, 22, 3, 0, 23, 3, 1, 11, 4, 1, 12, 4, 0, 13, 4, 0, 14, 4, 0, 15, 4, 0, 16, 4, 4, 17, 4, 3, 18, 4, 5, 19, 4, 0, 20, 4, 0, 21, 4, 0, 22, 4, 0, 23, 4, 1, 11, 5, 1, 12, 5, 0, 13, 5, 0, 14, 5, 0, 15, 5, 0, 16, 5, 4, 17, 5, 3, 18, 5, 5, 19, 5, 0, 20, 5, 0, 21, 5, 0, 22, 5, 0, 23, 5, 1, 11, 6, 1, 12, 6, 0, 13, 6, 0, 14, 6, 0, 15, 6, 0, 16, 6, 4, 17, 6, 3, 18, 6, 5, 19, 6, 0, 20, 6, 0, 21, 6, 0, 22, 6, 0, 23, 6, 1, 11, 7, 1, 12, 7, 0, 13, 7, 0, 14, 7, 0, 15, 7, 0, 16, 7, 4, 17, 7, 3, 18, 7, 5, 19, 7, 0, 20, 7, 0, 21, 7, 0, 22, 7, 0, 23, 7, 1, 11, 8, 1, 12, 8, 2, 13, 8, 2, 14, 8, 2, 15, 8, 2, 16, 8, 4, 17, 8, 3, 18, 8, 5, 19, 8, 2, 20, 8, 2, 21, 8, 2, 22, 8, 2, 23, 8, 1, 15, 9, 1, 16, 9, 0, 17, 9, 6, 18, 9, 0, 19, 9, 1, 15, 10, 1, 16, 10, 0, 17, 10, 0, 18, 10, 0, 19, 10, 1, 5, 11, 1, 6, 11, 1, 7, 11, 1, 8, 11, 1, 9, 11, 1, 10, 11, 1, 11, 11, 1, 12, 11, 1, 13, 11, 1, 14, 11, 1, 15, 11, 1, 16, 11, 0, 17, 11, 6, 18, 11, 0, 19, 11, 1, 20, 11, 1, 21, 11, 1, 22, 11, 1, 23, 11, 1, 24, 11, 1, 25, 11, 1, 26, 11, 1, 27, 11, 1, 28, 11, 1, 29, 11, 1, 5, 12, 1, 6, 12, 0, 7, 12, 0, 8, 12, 0, 9, 12, 0, 10, 12, 0, 11, 12, 0, 12, 12, 0, 13, 12, 0, 14, 12, 0, 15, 12, 0, 16, 12, 0, 17, 12, 6, 18, 12, 0, 19, 12, 0, 20, 12, 0, 21, 12, 0, 22, 12, 0, 23, 12, 0, 24, 12, 0, 25, 12, 0, 26, 12, 0, 27, 12, 0, 28, 12, 0, 29, 12, 1, 5, 13, 1, 6, 13, 0, 7, 13, 0, 8, 13, 0, 9, 13, 0, 10, 13, 0, 11, 13, 0, 12, 13, 0, 13, 13, 0, 14, 13, 0, 15, 13, 0, 16, 13, 0, 17, 13, 6, 18, 13, 0, 19, 13, 0, 20, 13, 0, 21, 13, 0, 22, 13, 0, 23, 13, 0, 24, 13, 0, 25, 13, 0, 26, 13, 0, 27, 13, 0, 28, 13, 0, 29, 13, 1, 5, 14, 1, 6, 14, 0, 7, 14, 0, 8, 14, 0, 9, 14, 0, 10, 14, 0, 11, 14, 0, 12, 14, 0, 13, 14, 0, 14, 14, 0, 15, 14, 0, 16, 14, 4, 17, 14, 3, 18, 14, 5, 19, 14, 0, 20, 14, 0, 21, 14, 0, 22, 14, 0, 23, 14, 0, 24, 14, 0, 25, 14, 0, 26, 14, 0, 27, 14, 0, 28, 14, 0, 29, 14, 1, 5, 15, 1, 6, 15, 0, 7, 15, 0, 8, 15, 0, 9, 15, 0, 10, 15, 0, 11, 15, 0, 12, 15, 0, 13, 15, 0, 14, 15, 0, 15, 15, 0, 16, 15, 4, 17, 15, 3, 18, 15, 5, 19, 15, 0, 20, 15, 0, 21, 15, 0, 22, 15, 0, 23, 15, 0, 24, 15, 0, 25, 15, 0, 26, 15, 0, 27, 15, 0, 28, 15, 0, 29, 15, 1, 5, 16, 1, 6, 16, 0, 7, 16, 0, 8, 16, 0, 9, 16, 0, 10, 16, 0, 11, 16, 0, 12, 16, 0, 13, 16, 0, 14, 16, 0, 15, 16, 0, 16, 16, 4, 17, 16, 3, 18, 16, 5, 19, 16, 0, 20, 16, 0, 21, 16, 0, 22, 16, 0, 23, 16, 0, 24, 16, 0, 25, 16, 0, 26, 16, 0, 27, 16, 0, 28, 16, 0, 29, 16, 1, 5, 17, 1, 6, 17, 0, 7, 17, 0, 8, 17, 0, 9, 17, 0, 10, 17, 0, 11, 17, 0, 12, 17, 0, 13, 17, 0, 14, 17, 0, 15, 17, 0, 16, 17, 0, 17, 17, 6, 18, 17, 0, 19, 17, 0, 20, 17, 0, 21, 17, 0, 22, 17, 0, 23, 17, 0, 24, 17, 0, 25, 17, 0, 26, 17, 0, 27, 17, 0, 28, 17, 0, 29, 17, 1, 5, 18, 1, 6, 18, 2, 7, 18, 2, 8, 18, 2, 9, 18, 2, 10, 18, 2, 11, 18, 2, 12, 18, 2, 13, 18, 2, 14, 18, 2, 15, 18, 2, 16, 18, 0, 17, 18, 6, 18, 18, 0, 19, 18, 2, 20, 18, 2, 21, 18, 2, 22, 18, 2, 23, 18, 2, 24, 18, 2, 25, 18, 2, 26, 18, 2, 27, 18, 2, 28, 18, 2, 29, 18, 1, 0, 19, 1, 1, 19, 1, 2, 19, 1, 3, 19, 1, 4, 19, 1, 5, 19, 1, 6, 19, 1, 7, 19, 1, 8, 19, 1, 9, 19, 1, 10, 19, 1, 15, 19, 1, 16, 19, 0, 17, 19, 6, 18, 19, 0, 19, 19, 1, 24, 19, 1, 25, 19, 1, 26, 19, 1, 27, 19, 1, 28, 19, 1, 29, 19, 1, 30, 19, 1, 31, 19, 1, 32, 19, 1, 33, 19, 1, 34, 19, 1, 0, 20, 1, 1, 20, 0, 2, 20, 0, 3, 20, 0, 4, 20, 0, 5, 20, 0, 6, 20, 0, 7, 20, 0, 8, 20, 0, 9, 20, 0, 10, 20, 1, 15, 20, 1, 16, 20, 0, 17, 20, 6, 18, 20, 0, 19, 20, 1, 24, 20, 1, 25, 20, 0, 26, 20, 0, 27, 20, 0, 28, 20, 0, 29, 20, 0, 30, 20, 0, 31, 20, 0, 32, 20, 0, 33, 20, 0, 34, 20, 1, 0, 21, 1, 1, 21, 0, 2, 21, 0, 3, 21, 0, 4, 21, 0, 5, 21, 0, 6, 21, 0, 7, 21, 0, 8, 21, 0, 9, 21, 0, 10, 21, 1, 11, 21, 1, 12, 21, 1, 13, 21, 1, 14, 21, 1, 15, 21, 1, 16, 21, 0, 17, 21, 6, 18, 21, 0, 19, 21, 1, 20, 21, 1, 21, 21, 1, 22, 21, 1, 23, 21, 1, 24, 21, 1, 25, 21, 0, 26, 21, 0, 27, 21, 0, 28, 21, 0, 29, 21, 0, 30, 21, 0, 31, 21, 0, 32, 21, 0, 33, 21, 0, 34, 21, 1, 0, 22, 1, 1, 22, 0, 2, 22, 0, 3, 22, 0, 4, 22, 0, 5, 22, 0, 6, 22, 0, 7, 22, 0, 8, 22, 0, 9, 22, 0, 10, 22, 1, 11, 22, 1, 12, 22, 0, 13, 22, 0, 14, 22, 0, 15, 22, 0, 16, 22, 4, 17, 22, 3, 18, 22, 5, 19, 22, 0, 20, 22, 0, 21, 22, 0, 22, 22, 0, 23, 22, 1, 24, 22, 1, 25, 22, 0, 26, 22, 0, 27, 22, 0, 28, 22, 0, 29, 22, 0, 30, 22, 0, 31, 22, 0, 32, 22, 0, 33, 22, 0, 34, 22, 1, 0, 23, 1, 1, 23, 0, 2, 23, 0, 3, 23, 0, 4, 23, 0, 5, 23, 0, 6, 23, 0, 7, 23, 0, 8, 23, 0, 9, 23, 0, 10, 23, 0, 11, 23, 0, 12, 23, 0, 13, 23, 0, 14, 23, 0, 15, 23, 0, 16, 23, 4, 17, 23, 3, 18, 23, 5, 19, 23, 0, 20, 23, 0, 21, 23, 0, 22, 23, 0, 23, 23, 0, 24, 23, 0, 25, 23, 0, 26, 23, 0, 27, 23, 0, 28, 23, 0, 29, 23, 0, 30, 23, 0, 31, 23, 0, 32, 23, 0, 33, 23, 0, 34, 23, 1, 0, 24, 1, 1, 24, 0, 2, 24, 0, 3, 24, 0, 4, 24, 0, 5, 24, 0, 6, 24, 0, 7, 24, 0, 8, 24, 0, 9, 24, 0, 10, 24, 2, 11, 24, 2, 12, 24, 0, 13, 24, 0, 14, 24, 0, 15, 24, 0, 16, 24, 4, 17, 24, 3, 18, 24, 5, 19, 24, 0, 20, 24, 0, 21, 24, 0, 22, 24, 0, 23, 24, 2, 24, 24, 2, 25, 24, 0, 26, 24, 0, 27, 24, 0, 28, 24, 0, 29, 24, 0, 30, 24, 0, 31, 24, 0, 32, 24, 0, 33, 24, 0, 34, 24, 1, 0, 25, 1, 1, 25, 0, 2, 25, 0, 3, 25, 0, 4, 25, 0, 5, 25, 0, 6, 25, 0, 7, 25, 0, 8, 25, 0, 9, 25, 0, 10, 25, 1, 11, 25, 1, 12, 25, 0, 13, 25, 0, 14, 25, 0, 15, 25, 0, 16, 25, 4, 17, 25, 3, 18, 25, 5, 19, 25, 0, 20, 25, 0, 21, 25, 0, 22, 25, 0, 23, 25, 1, 24, 25, 1, 25, 25, 0, 26, 25, 0, 27, 25, 0, 28, 25, 0, 29, 25, 0, 30, 25, 0, 31, 25, 0, 32, 25, 0, 33, 25, 0, 34, 25, 1, 0, 26, 1, 1, 26, 0, 2, 26, 0, 3, 26, 0, 4, 26, 0, 5, 26, 0, 6, 26, 0, 7, 26, 0, 8, 26, 0, 9, 26, 0, 10, 26, 1, 11, 26, 1, 12, 26, 0, 13, 26, 0, 14, 26, 0, 15, 26, 0, 16, 26, 4, 17, 26, 3, 18, 26, 5, 19, 26, 0, 20, 26, 0, 21, 26, 0, 22, 26, 0, 23, 26, 1, 24, 26, 1, 25, 26, 0, 26, 26, 0, 27, 26, 0, 28, 26, 0, 29, 26, 0, 30, 26, 0, 31, 26, 0, 32, 26, 0, 33, 26, 0, 34, 26, 1, 0, 27, 1, 1, 27, 0, 2, 27, 0, 3, 27, 0, 4, 27, 0, 5, 27, 0, 6, 27, 0, 7, 27, 0, 8, 27, 0, 9, 27, 0, 10, 27, 1, 11, 27, 1, 12, 27, 0, 13, 27, 0, 14, 27, 0, 15, 27, 0, 16, 27, 4, 17, 27, 3, 18, 27, 5, 19, 27, 0, 20, 27, 0, 21, 27, 0, 22, 27, 0, 23, 27, 1, 24, 27, 1, 25, 27, 0, 26, 27, 0, 27, 27, 0, 28, 27, 0, 29, 27, 0, 30, 27, 0, 31, 27, 0, 32, 27, 0, 33, 27, 0, 34, 27, 1, 0, 28, 1, 1, 28, 2, 2, 28, 2, 3, 28, 2, 4, 28, 2, 5, 28, 2, 6, 28, 2, 7, 28, 2, 8, 28, 2, 9, 28, 2, 10, 28, 1, 11, 28, 1, 12, 28, 0, 13, 28, 0, 14, 28, 0, 15, 28, 0, 16, 28, 4, 17, 28, 3, 18, 28, 5, 19, 28, 0, 20, 28, 0, 21, 28, 0, 22, 28, 0, 23, 28, 1, 24, 28, 1, 25, 28, 2, 26, 28, 2, 27, 28, 2, 28, 28, 2, 29, 28, 2, 30, 28, 2, 31, 28, 2, 32, 28, 2, 33, 28, 2, 34, 28, 1, 11, 29, 1, 12, 29, 0, 13, 29, 0, 14, 29, 0, 15, 29, 0, 16, 29, 4, 17, 29, 3, 18, 29, 5, 19, 29, 0, 20, 29, 0, 21, 29, 0, 22, 29, 0, 23, 29, 1, 11, 30, 1, 12, 30, 2, 13, 30, 2, 14, 30, 2, 15, 30, 2, 16, 30, 2, 17, 30, 2, 18, 30, 2, 19, 30, 2, 20, 30, 2, 21, 30, 2, 22, 30, 2, 23, 30, 1)
+}
+
+[node name="Props" type="Node3D" parent="." unique_id=620288483]
+
+[node name="Pillars" type="Node3D" parent="Props" unique_id=1379873039]
+
+[node name="Pillar_12_2" type="StaticBody3D" parent="Props/Pillars" unique_id=255315814 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 5)
+
+[node name="Pillar_22_2" type="StaticBody3D" parent="Props/Pillars" unique_id=227352105 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 5)
+
+[node name="Pillar_12_5" type="StaticBody3D" parent="Props/Pillars" unique_id=1313649647 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 11)
+
+[node name="Pillar_22_5" type="StaticBody3D" parent="Props/Pillars" unique_id=1504331579 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 11)
+
+[node name="Pillar_12_12" type="StaticBody3D" parent="Props/Pillars" unique_id=182463548 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 25)
+
+[node name="Pillar_22_12" type="StaticBody3D" parent="Props/Pillars" unique_id=377902519 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 25)
+
+[node name="Pillar_6_14" type="StaticBody3D" parent="Props/Pillars" unique_id=379718652 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 29)
+
+[node name="Pillar_28_14" type="StaticBody3D" parent="Props/Pillars" unique_id=1068059199 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 0, 29)
+
+[node name="Pillar_6_16" type="StaticBody3D" parent="Props/Pillars" unique_id=2120905947 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 33)
+
+[node name="Pillar_28_16" type="StaticBody3D" parent="Props/Pillars" unique_id=931948708 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 0, 33)
+
+[node name="Pillar_1_24" type="StaticBody3D" parent="Props/Pillars" unique_id=682954824 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 49)
+
+[node name="Pillar_9_24" type="StaticBody3D" parent="Props/Pillars" unique_id=378166693 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 49)
+
+[node name="Pillar_12_24" type="StaticBody3D" parent="Props/Pillars" unique_id=1657696785 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 49)
+
+[node name="Pillar_22_24" type="StaticBody3D" parent="Props/Pillars" unique_id=1284780025 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 49)
+
+[node name="Pillar_25_24" type="StaticBody3D" parent="Props/Pillars" unique_id=509027912 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, 49)
+
+[node name="Pillar_33_24" type="StaticBody3D" parent="Props/Pillars" unique_id=1330175363 instance=ExtResource("5_qltbj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67, 0, 49)
+
+[node name="Braziers" type="Node3D" parent="Props" unique_id=1306033728]
+
+[node name="Brazier_12_3" type="StaticBody3D" parent="Props/Braziers" unique_id=212653876 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 7)
+
+[node name="Brazier_22_3" type="StaticBody3D" parent="Props/Braziers" unique_id=924631097 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 7)
+
+[node name="Brazier_12_7" type="StaticBody3D" parent="Props/Braziers" unique_id=1342841834 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 15)
+
+[node name="Brazier_22_7" type="StaticBody3D" parent="Props/Braziers" unique_id=506551744 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 15)
+
+[node name="Brazier_6_12" type="StaticBody3D" parent="Props/Braziers" unique_id=488753252 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 25)
+
+[node name="Brazier_28_12" type="StaticBody3D" parent="Props/Braziers" unique_id=1742640059 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 0, 25)
+
+[node name="Brazier_6_17" type="StaticBody3D" parent="Props/Braziers" unique_id=947115347 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 0, 35)
+
+[node name="Brazier_28_17" type="StaticBody3D" parent="Props/Braziers" unique_id=827744806 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 0, 35)
+
+[node name="Brazier_1_20" type="StaticBody3D" parent="Props/Braziers" unique_id=1494438098 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 41)
+
+[node name="Brazier_9_20" type="StaticBody3D" parent="Props/Braziers" unique_id=166929112 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 41)
+
+[node name="Brazier_25_20" type="StaticBody3D" parent="Props/Braziers" unique_id=235479951 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, 41)
+
+[node name="Brazier_33_20" type="StaticBody3D" parent="Props/Braziers" unique_id=1793376813 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67, 0, 41)
+
+[node name="Brazier_12_22" type="StaticBody3D" parent="Props/Braziers" unique_id=80147659 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 45)
+
+[node name="Brazier_22_22" type="StaticBody3D" parent="Props/Braziers" unique_id=216675105 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 45)
+
+[node name="Brazier_1_26" type="StaticBody3D" parent="Props/Braziers" unique_id=20390538 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 53)
+
+[node name="Brazier_9_26" type="StaticBody3D" parent="Props/Braziers" unique_id=39380522 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, 53)
+
+[node name="Brazier_12_26" type="StaticBody3D" parent="Props/Braziers" unique_id=1254933253 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 53)
+
+[node name="Brazier_22_26" type="StaticBody3D" parent="Props/Braziers" unique_id=1486058546 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 53)
+
+[node name="Brazier_25_26" type="StaticBody3D" parent="Props/Braziers" unique_id=854481601 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 0, 53)
+
+[node name="Brazier_33_26" type="StaticBody3D" parent="Props/Braziers" unique_id=94151083 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67, 0, 53)
+
+[node name="Brazier_12_29" type="StaticBody3D" parent="Props/Braziers" unique_id=398672913 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 59)
+
+[node name="Brazier_22_29" type="StaticBody3D" parent="Props/Braziers" unique_id=769999877 instance=ExtResource("6_0d5rf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 59)
+
+[node name="WallTorches" type="Node3D" parent="Props" unique_id=1627241922]
+
+[node name="Torch_12_1" type="Node3D" parent="Props/WallTorches" unique_id=245592631 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 2.3, 4.1099997)
+
+[node name="Torch_15_1" type="Node3D" parent="Props/WallTorches" unique_id=1321225913 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 2.3, 4.1099997)
+
+[node name="Torch_18_1" type="Node3D" parent="Props/WallTorches" unique_id=1016851143 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37, 2.3, 4.1099997)
+
+[node name="Torch_21_1" type="Node3D" parent="Props/WallTorches" unique_id=907989823 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 2.3, 4.1099997)
+
+[node name="Torch_6_11" type="Node3D" parent="Props/WallTorches" unique_id=614578424 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 2.3, 24.11)
+
+[node name="Torch_9_11" type="Node3D" parent="Props/WallTorches" unique_id=1741801864 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 2.3, 24.11)
+
+[node name="Torch_12_11" type="Node3D" parent="Props/WallTorches" unique_id=649975573 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 2.3, 24.11)
+
+[node name="Torch_15_11" type="Node3D" parent="Props/WallTorches" unique_id=1506681420 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 2.3, 24.11)
+
+[node name="Torch_21_11" type="Node3D" parent="Props/WallTorches" unique_id=822377984 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 2.3, 24.11)
+
+[node name="Torch_24_11" type="Node3D" parent="Props/WallTorches" unique_id=49457570 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 2.3, 24.11)
+
+[node name="Torch_27_11" type="Node3D" parent="Props/WallTorches" unique_id=442382837 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 2.3, 24.11)
+
+[node name="Torch_3_19" type="Node3D" parent="Props/WallTorches" unique_id=2059760462 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 2.3, 40.11)
+
+[node name="Torch_6_19" type="Node3D" parent="Props/WallTorches" unique_id=934805176 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, 2.3, 40.11)
+
+[node name="Torch_9_19" type="Node3D" parent="Props/WallTorches" unique_id=774119465 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 2.3, 40.11)
+
+[node name="Torch_27_19" type="Node3D" parent="Props/WallTorches" unique_id=1366246996 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 2.3, 40.11)
+
+[node name="Torch_30_19" type="Node3D" parent="Props/WallTorches" unique_id=670481655 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61, 2.3, 40.11)
+
+[node name="Torch_33_19" type="Node3D" parent="Props/WallTorches" unique_id=2101911767 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67, 2.3, 40.11)
+
+[node name="Torch_12_21" type="Node3D" parent="Props/WallTorches" unique_id=304557768 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 2.3, 44.11)
+
+[node name="Torch_15_21" type="Node3D" parent="Props/WallTorches" unique_id=150486866 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 2.3, 44.11)
+
+[node name="Torch_21_21" type="Node3D" parent="Props/WallTorches" unique_id=710758992 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 2.3, 44.11)
+
+[node name="Torch_24_22" type="Node3D" parent="Props/WallTorches" unique_id=1395824357 instance=ExtResource("7_yqioc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 2.3, 46.11)
+
+[node name="Banners" type="Node3D" parent="Props" unique_id=2047138467]
+
+[node name="Banner_16_1" type="MeshInstance3D" parent="Props/Banners" unique_id=65425243 instance=ExtResource("8_q336c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 2.4, 4.0299997)
+material_override = ExtResource("9_eyywo")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Banner_22_1" type="MeshInstance3D" parent="Props/Banners" unique_id=132740011 instance=ExtResource("8_q336c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 2.4, 4.0299997)
+material_override = ExtResource("9_eyywo")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Banner_10_11" type="MeshInstance3D" parent="Props/Banners" unique_id=2019459168 instance=ExtResource("8_q336c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 2.4, 24.03)
+material_override = ExtResource("9_eyywo")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Banner_22_11" type="MeshInstance3D" parent="Props/Banners" unique_id=2040177004 instance=ExtResource("8_q336c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 2.4, 24.03)
+material_override = ExtResource("9_eyywo")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Banner_28_11" type="MeshInstance3D" parent="Props/Banners" unique_id=1260118078 instance=ExtResource("8_q336c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 2.4, 24.03)
+material_override = ExtResource("9_eyywo")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Banner_4_19" type="MeshInstance3D" parent="Props/Banners" unique_id=1991584465 instance=ExtResource("8_q336c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2.4, 40.03)
+material_override = ExtResource("9_eyywo")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Banner_28_19" type="MeshInstance3D" parent="Props/Banners" unique_id=1566123604 instance=ExtResource("8_q336c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 57, 2.4, 40.03)
+material_override = ExtResource("9_eyywo")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Banner_22_21" type="MeshInstance3D" parent="Props/Banners" unique_id=1971197244 instance=ExtResource("8_q336c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 2.4, 44.03)
+material_override = ExtResource("9_eyywo")
+mesh = SubResource("QuadMesh_lbfw1")
+
+[node name="Windows" type="Node3D" parent="Props" unique_id=2085527777]
+
+[node name="Window_13_1" type="MeshInstance3D" parent="Props/Windows" unique_id=478802810 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 2.6, 4.0299997)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_19_1" type="MeshInstance3D" parent="Props/Windows" unique_id=1906653548 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 2.6, 4.0299997)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_7_11" type="MeshInstance3D" parent="Props/Windows" unique_id=387579923 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 2.6, 24.03)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_13_11" type="MeshInstance3D" parent="Props/Windows" unique_id=1671258432 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 2.6, 24.03)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_19_11" type="MeshInstance3D" parent="Props/Windows" unique_id=1908828307 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 2.6, 24.03)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_25_11" type="MeshInstance3D" parent="Props/Windows" unique_id=1860472770 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 2.6, 24.03)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_1_19" type="MeshInstance3D" parent="Props/Windows" unique_id=1847838142 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.6, 40.03)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_7_19" type="MeshInstance3D" parent="Props/Windows" unique_id=780825966 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 2.6, 40.03)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_25_19" type="MeshInstance3D" parent="Props/Windows" unique_id=593149191 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51, 2.6, 40.03)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_31_19" type="MeshInstance3D" parent="Props/Windows" unique_id=1872070098 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63, 2.6, 40.03)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_13_21" type="MeshInstance3D" parent="Props/Windows" unique_id=207411197 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, 2.6, 44.03)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_19_21" type="MeshInstance3D" parent="Props/Windows" unique_id=1788950399 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39, 2.6, 44.03)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Window_10_22" type="MeshInstance3D" parent="Props/Windows" unique_id=153601787 instance=ExtResource("10_2ivqu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 2.6, 46.03)
+material_override = ExtResource("11_0hhbd")
+mesh = SubResource("QuadMesh_u5nja")
+
+[node name="Chests" type="Node3D" parent="." unique_id=1447128309]
+
+[node name="ChestHallWest" type="StaticBody3D" parent="Chests" unique_id=58324483 instance=ExtResource("12_dqjyl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, 27)
+script = ExtResource("13_mj0u5")
+chest_id = &"chest_hall_west"
+equipment = Array[ExtResource("14_lwgte")]([ExtResource("15_oe3wp")])
+
+[node name="ChestHallEast" type="StaticBody3D" parent="Chests" unique_id=1654221918 instance=ExtResource("12_dqjyl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55, 0, 27)
+script = ExtResource("13_mj0u5")
+chest_id = &"chest_hall_east"
+equipment = Array[ExtResource("14_lwgte")]([ExtResource("16_6sxv0")])
+
+[node name="ChestWestWingNorth" type="StaticBody3D" parent="Chests" unique_id=962160522 instance=ExtResource("12_dqjyl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 41)
+script = ExtResource("13_mj0u5")
+chest_id = &"chest_west_wing_north"
+equipment = Array[ExtResource("14_lwgte")]([ExtResource("17_xllc5")])
+items = Dictionary[ExtResource("18_xdnlc"), int]({
+ExtResource("19_c1nv1"): 3,
+ExtResource("20_ogro4"): 1
+})
+
+[node name="ChestEastWingNorth" type="StaticBody3D" parent="Chests" unique_id=735253067 instance=ExtResource("12_dqjyl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61, 0, 41)
+script = ExtResource("13_mj0u5")
+chest_id = &"chest_east_wing_north"
+equipment = Array[ExtResource("14_lwgte")]([ExtResource("21_ubhp5"), ExtResource("22_h78u1")])
+items = Dictionary[ExtResource("18_xdnlc"), int]({
+ExtResource("23_1vdt7"): 2
+})
+
+[node name="ChestWestWingSouth" type="StaticBody3D" parent="Chests" unique_id=589170452 instance=ExtResource("12_dqjyl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 55)
+script = ExtResource("13_mj0u5")
+chest_id = &"chest_west_wing_south"
+equipment = Array[ExtResource("14_lwgte")]([ExtResource("24_ul5k7"), ExtResource("25_24p46")])
+
+[node name="ChestEastWingSouth" type="StaticBody3D" parent="Chests" unique_id=1821325182 instance=ExtResource("12_dqjyl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63, 0, 55)
+script = ExtResource("13_mj0u5")
+chest_id = &"chest_east_wing_south"
+equipment = Array[ExtResource("14_lwgte")]([ExtResource("26_k174p"), ExtResource("27_a2qe4"), ExtResource("28_1l2l1"), ExtResource("29_t3b6w")])
+items = Dictionary[ExtResource("18_xdnlc"), int]({
+ExtResource("30_i1vh1"): 2,
+ExtResource("31_ydcvm"): 1
+})
+
+[node name="Enemies" type="Node3D" parent="." unique_id=1324995584]
+unique_name_in_owner = true
+
+[node name="ThroneGuardians" type="CharacterBody3D" parent="Enemies" unique_id=650121061 instance=ExtResource("32_cynic")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 21)
+collision_layer = 4
+motion_mode = 1
+script = ExtResource("33_yc676")
+enemy_id = &"throne_guardians"
+encounter = Array[ExtResource("34_ma78b")]([ExtResource("35_gqdw2"), ExtResource("36_43wtb"), ExtResource("35_gqdw2")])
+stationary = true
+
+[node name="HallWest" type="CharacterBody3D" parent="Enemies" unique_id=511292735 instance=ExtResource("32_cynic")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0, 31)
+collision_layer = 4
+motion_mode = 1
+script = ExtResource("33_yc676")
+enemy_id = &"hall_west"
+encounter = Array[ExtResource("34_ma78b")]([ExtResource("37_52g41"), ExtResource("36_43wtb"), ExtResource("37_52g41")])
+
+[node name="HallEast" type="CharacterBody3D" parent="Enemies" unique_id=1578397121 instance=ExtResource("32_cynic")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, 0, 31)
+collision_layer = 4
+motion_mode = 1
+script = ExtResource("33_yc676")
+enemy_id = &"hall_east"
+encounter = Array[ExtResource("34_ma78b")]([ExtResource("38_glcr0"), ExtResource("38_glcr0")])
+
+[node name="WestWingNorth" type="CharacterBody3D" parent="Enemies" unique_id=1141902513 instance=ExtResource("32_cynic")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 45)
+collision_layer = 4
+motion_mode = 1
+script = ExtResource("33_yc676")
+enemy_id = &"west_wing_north"
+encounter = Array[ExtResource("34_ma78b")]([ExtResource("39_rgsk1"), ExtResource("39_rgsk1")])
+
+[node name="EastWingNorth" type="CharacterBody3D" parent="Enemies" unique_id=2090992260 instance=ExtResource("32_cynic")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61, 0, 45)
+collision_layer = 4
+motion_mode = 1
+script = ExtResource("33_yc676")
+enemy_id = &"east_wing_north"
+encounter = Array[ExtResource("34_ma78b")]([ExtResource("37_52g41"), ExtResource("37_52g41")])
+
+[node name="WestWingSouth" type="CharacterBody3D" parent="Enemies" unique_id=1199625846 instance=ExtResource("32_cynic")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 0, 51)
+collision_layer = 4
+motion_mode = 1
+script = ExtResource("33_yc676")
+enemy_id = &"west_wing_south"
+encounter = Array[ExtResource("34_ma78b")]([ExtResource("39_rgsk1"), ExtResource("36_43wtb"), ExtResource("39_rgsk1")])
+
+[node name="EastWingSouth" type="CharacterBody3D" parent="Enemies" unique_id=1127573590 instance=ExtResource("32_cynic")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59, 0, 51)
+collision_layer = 4
+motion_mode = 1
+script = ExtResource("33_yc676")
+enemy_id = &"east_wing_south"
+encounter = Array[ExtResource("34_ma78b")]([ExtResource("38_glcr0"), ExtResource("39_rgsk1")])
+
+[node name="Throne" type="Node3D" parent="." unique_id=1093312209 instance=ExtResource("40_1s8oo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 5)
+
+[node name="BossTrigger" type="Area3D" parent="." unique_id=378967761]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 1, 8)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="BossTrigger" unique_id=1588411055]
+shape = SubResource("BoxShape3D_8sotw")
+
+[node name="SaveCrystal" type="StaticBody3D" parent="." unique_id=1291422120 instance=ExtResource("41_c2pdq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 31)
+script = ExtResource("42_acr5s")
+
+[node name="PlayerStart" type="Marker3D" parent="." unique_id=2066038439]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 53)
+
+[node name="Party" type="Node3D" parent="." unique_id=292264888]
+
+[node name="Player" type="CharacterBody3D" parent="Party" unique_id=1672862708 instance=ExtResource("43_sc8ty")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 53)
+collision_layer = 2
+motion_mode = 1
+script = ExtResource("44_abndp")
+
+[node name="Follower1" type="Node3D" parent="Party" unique_id=1946130737 instance=ExtResource("45_c38e1")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 54.4)
+script = ExtResource("46_hnlvn")
+
+[node name="Follower2" type="Node3D" parent="Party" unique_id=637869155 instance=ExtResource("45_c38e1")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 55.8)
+script = ExtResource("46_hnlvn")
+
+[node name="FieldCamera" type="Camera3D" parent="." unique_id=1623736981 node_paths=PackedStringArray("target")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.8290376, 0.5591929, 0, -0.5591929, 0.8290376, 35, 10.306279, 67.093636)
+current = true
+fov = 36.0
+far = 120.0
+script = ExtResource("47_tsybj")
+target = NodePath("../Party/Player")
+
+[node name="Dust" type="GPUParticles3D" parent="." unique_id=1121255567 instance=ExtResource("48_1ml5x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 2.5, 32)
+material_override = ExtResource("49_4dia1")
+amount = 400
+lifetime = 7.0
+preprocess = 7.0
+process_material = SubResource("ParticleProcessMaterial_odevt")
+draw_pass_1 = SubResource("QuadMesh_acv1i")
+script = ExtResource("50_xel3u")
+extents = Vector3(35, 3, 32)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=587116511]
+unique_name_in_owner = true
+layer = 5
+
+[node name="Root" type="Control" parent="HUD" unique_id=312862545]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="LocationLabel" type="Label" parent="HUD/Root" unique_id=1242746586]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 24.0
+offset_right = 36.0
+offset_bottom = 24.0
+theme_type_variation = &"GoldLabel"
+theme_override_font_sizes/font_size = 28
+text = "Castle Nocturne"
+
+[node name="HintLabel" type="Label" parent="HUD/Root" unique_id=1934906735]
+modulate = Color(1, 1, 1, 0.7)
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -560.0
+offset_top = -34.0
+offset_right = -20.0
+offset_bottom = -8.0
+theme_override_font_sizes/font_size = 15
+text = "Move: Arrows/WASD   Dash: Shift   Check: Z/Enter   Menu: X/Tab"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="HUD" unique_id=408228664]
+libraries/ = SubResource("AnimationLibrary_gufxf")
+autoplay = &"show_location"

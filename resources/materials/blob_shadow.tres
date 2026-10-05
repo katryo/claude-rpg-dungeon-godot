@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/blob_shadow.png" id="1_hqn7x"]
+
+[resource]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0, 0, 0, 0.6)
+albedo_texture = ExtResource("1_hqn7x")

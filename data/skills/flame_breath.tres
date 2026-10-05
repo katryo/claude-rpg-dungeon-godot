@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="1_nucr7"]
+[ext_resource type="Script" path="res://scripts/resources/skill_data.gd" id="2_f7tu4"]
+
+[resource]
+script = ExtResource("2_f7tu4")
+display_name = "Flame Breath"
+kind = 1
+element = 1
+power = 0.85
+target = 1

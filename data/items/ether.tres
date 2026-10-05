@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_x64tw"]
+
+[resource]
+script = ExtResource("1_x64tw")
+display_name = "Ether"
+description = "Restores 40 MP to one ally."
+kind = 1
+amount = 40.0

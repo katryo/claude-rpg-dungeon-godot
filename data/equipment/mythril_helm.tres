@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_gmgbi"]
+[ext_resource type="Resource" path="res://data/heroes/arlen.tres" id="2_ki78u"]
+[ext_resource type="Resource" path="res://data/heroes/garrick.tres" id="3_ke5rl"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="4_fv6do"]
+
+[resource]
+script = ExtResource("4_fv6do")
+display_name = "Mythril Helm"
+description = "Light and nearly unbreakable."
+slot = 1
+allowed_heroes = Array[ExtResource("1_gmgbi")]([ExtResource("2_ki78u"), ExtResource("3_ke5rl")])
+def = 12
+mdf = 6

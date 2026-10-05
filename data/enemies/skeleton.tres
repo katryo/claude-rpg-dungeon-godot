@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_action.gd" id="1_6xmi0"]
+[ext_resource type="Resource" path="res://data/skills/attack.tres" id="2_s7qy5"]
+[ext_resource type="Resource" path="res://data/skills/bone_crush.tres" id="3_2765a"]
+[ext_resource type="Script" path="res://scripts/resources/enemy_data.gd" id="4_wix1q"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/skeleton.tres" id="5_7swr6"]
+
+[sub_resource type="Resource" id="Resource_f6q1b"]
+script = ExtResource("1_6xmi0")
+skill = ExtResource("2_s7qy5")
+weight = 7
+
+[sub_resource type="Resource" id="Resource_br6mt"]
+script = ExtResource("1_6xmi0")
+skill = ExtResource("3_2765a")
+weight = 3
+
+[resource]
+script = ExtResource("4_wix1q")
+display_name = "Skeleton Knight"
+sprite_frames = ExtResource("5_7swr6")
+hp = 170
+atk = 32
+def = 16
+mag = 8
+exp_reward = 40
+gold_reward = 18
+weaknesses = 9
+resistances = 18
+actions = Array[ExtResource("1_6xmi0")]([SubResource("Resource_f6q1b"), SubResource("Resource_br6mt")])

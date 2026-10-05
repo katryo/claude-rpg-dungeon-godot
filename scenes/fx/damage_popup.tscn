@@ -1,0 +1,50 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/fx/damage_popup.gd" id="1_kcwhv"]
+
+[sub_resource type="Animation" id="Animation_4fg8e"]
+length = 1.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Label:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.9),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0.9, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.6, 1.1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [1.0, 1.0, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_cj7u7"]
+_data = {
+&"float": SubResource("Animation_4fg8e")
+}
+
+[node name="DamagePopup" type="Node3D" unique_id=1365481824]
+script = ExtResource("1_kcwhv")
+
+[node name="Label" type="Label3D" parent="." unique_id=19623840]
+pixel_size = 0.009
+billboard = 1
+no_depth_test = true
+render_priority = 20
+outline_modulate = Color(0.05, 0.02, 0.08, 1)
+font_size = 64
+outline_size = 16
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=297538550]
+libraries/ = SubResource("AnimationLibrary_cj7u7")

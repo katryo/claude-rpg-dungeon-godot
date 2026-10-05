@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_action.gd" id="1_w7kya"]
+[ext_resource type="Resource" path="res://data/skills/attack.tres" id="2_2ljjx"]
+[ext_resource type="Resource" path="res://data/skills/stone_breath.tres" id="3_aib3a"]
+[ext_resource type="Script" path="res://scripts/resources/enemy_data.gd" id="4_blpgw"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/gargoyle.tres" id="5_8xyol"]
+
+[sub_resource type="Resource" id="Resource_44qdd"]
+script = ExtResource("1_w7kya")
+skill = ExtResource("2_2ljjx")
+weight = 6
+
+[sub_resource type="Resource" id="Resource_jsqxn"]
+script = ExtResource("1_w7kya")
+skill = ExtResource("3_aib3a")
+weight = 3
+
+[resource]
+script = ExtResource("4_blpgw")
+display_name = "Gargoyle"
+sprite_frames = ExtResource("5_8xyol")
+sprite_scale = 1.05
+flying = true
+hp = 150
+atk = 30
+def = 26
+mag = 20
+mdf = 14
+spd = 16
+exp_reward = 46
+gold_reward = 22
+weaknesses = 4
+resistances = 2
+actions = Array[ExtResource("1_w7kya")]([SubResource("Resource_44qdd"), SubResource("Resource_jsqxn")])

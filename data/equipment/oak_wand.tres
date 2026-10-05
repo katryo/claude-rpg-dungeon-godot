@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_utekr"]
+[ext_resource type="Resource" path="res://data/heroes/theia.tres" id="2_55iah"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_y2nyw"]
+
+[resource]
+script = ExtResource("3_y2nyw")
+display_name = "Oak Wand"
+description = "Carved from the sacred oak of Dodona."
+allowed_heroes = Array[ExtResource("1_utekr")]([ExtResource("2_55iah")])
+mp = 10
+atk = 3
+mag = 10

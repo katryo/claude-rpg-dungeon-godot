@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="GameStartData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/item_data.gd" id="1_po01n"]
+[ext_resource type="Resource" path="res://data/items/potion.tres" id="2_2qrmn"]
+[ext_resource type="Resource" path="res://data/items/ether.tres" id="3_6s1yx"]
+[ext_resource type="Resource" path="res://data/items/phoenix_down.tres" id="4_smgey"]
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="5_4anxd"]
+[ext_resource type="Resource" path="res://data/heroes/arlen.tres" id="6_l8lov"]
+[ext_resource type="Resource" path="res://data/heroes/garrick.tres" id="7_3lvdh"]
+[ext_resource type="Resource" path="res://data/heroes/theia.tres" id="8_jycyj"]
+[ext_resource type="Script" path="res://scripts/resources/game_start_data.gd" id="9_xgtu8"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="10_tmbdq"]
+[ext_resource type="Resource" path="res://data/equipment/rune_saber.tres" id="11_7oe8y"]
+[ext_resource type="Resource" path="res://data/equipment/leather_band.tres" id="12_cu15w"]
+[ext_resource type="Resource" path="res://data/equipment/mythril_mail.tres" id="13_tqpa2"]
+[ext_resource type="Resource" path="res://data/equipment/knight_sword.tres" id="14_y86bd"]
+[ext_resource type="Resource" path="res://data/equipment/great_helm.tres" id="15_pbrbb"]
+[ext_resource type="Resource" path="res://data/equipment/plate_armor.tres" id="16_1pq7s"]
+[ext_resource type="Resource" path="res://data/equipment/oak_wand.tres" id="17_3y4y8"]
+[ext_resource type="Resource" path="res://data/equipment/laurel_wreath.tres" id="18_nt8dt"]
+[ext_resource type="Resource" path="res://data/equipment/delphic_chiton.tres" id="19_o8v5x"]
+
+[resource]
+script = ExtResource("9_xgtu8")
+party = Array[ExtResource("5_4anxd")]([ExtResource("6_l8lov"), ExtResource("7_3lvdh"), ExtResource("8_jycyj")])
+items = Dictionary[ExtResource("1_po01n"), int]({
+ExtResource("2_2qrmn"): 6,
+ExtResource("3_6s1yx"): 3,
+ExtResource("4_smgey"): 2
+})
+starting_equipment = Array[ExtResource("10_tmbdq")]([ExtResource("11_7oe8y"), ExtResource("12_cu15w"), ExtResource("13_tqpa2"), ExtResource("14_y86bd"), ExtResource("15_pbrbb"), ExtResource("16_1pq7s"), ExtResource("17_3y4y8"), ExtResource("18_nt8dt"), ExtResource("19_o8v5x")])

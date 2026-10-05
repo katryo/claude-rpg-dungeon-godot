@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="1_ct060"]
+[ext_resource type="Script" path="res://scripts/resources/skill_data.gd" id="2_tif73"]
+
+[sub_resource type="Resource" id="Resource_o2gvl"]
+script = ExtResource("1_ct060")
+multiplier = 0.75
+
+[resource]
+script = ExtResource("2_tif73")
+display_name = "Shield Bash"
+description = "Slams a foe with the shield, lowering its Attack."
+mp_cost = 4
+power = 1.3
+debuff = SubResource("Resource_o2gvl")

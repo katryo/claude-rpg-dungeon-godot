@@ -1,0 +1,51 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/enemy_action.gd" id="1_1s4kj"]
+[ext_resource type="Resource" path="res://data/skills/attack.tres" id="2_ioag6"]
+[ext_resource type="Resource" path="res://data/skills/dark_nova.tres" id="3_nf5wq"]
+[ext_resource type="Resource" path="res://data/skills/soul_drain.tres" id="4_crrg1"]
+[ext_resource type="Resource" path="res://data/skills/hellfire.tres" id="5_dkvpl"]
+[ext_resource type="Resource" path="res://data/skills/dread_gaze.tres" id="6_v3gjw"]
+[ext_resource type="Script" path="res://scripts/resources/enemy_data.gd" id="7_rc3hs"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/dark_lord.tres" id="8_t2ljd"]
+
+[sub_resource type="Resource" id="Resource_ifxmt"]
+script = ExtResource("1_1s4kj")
+skill = ExtResource("2_ioag6")
+weight = 4
+
+[sub_resource type="Resource" id="Resource_04nj3"]
+script = ExtResource("1_1s4kj")
+skill = ExtResource("3_nf5wq")
+weight = 3
+
+[sub_resource type="Resource" id="Resource_pfktr"]
+script = ExtResource("1_1s4kj")
+skill = ExtResource("4_crrg1")
+weight = 2
+
+[sub_resource type="Resource" id="Resource_0g4au"]
+script = ExtResource("1_1s4kj")
+skill = ExtResource("5_dkvpl")
+weight = 3
+
+[sub_resource type="Resource" id="Resource_ttbjf"]
+script = ExtResource("1_1s4kj")
+skill = ExtResource("6_v3gjw")
+
+[resource]
+script = ExtResource("7_rc3hs")
+display_name = "Dark Lord Malzeth"
+sprite_frames = ExtResource("8_t2ljd")
+sprite_scale = 1.5
+is_boss = true
+hp = 3400
+atk = 50
+def = 30
+mag = 48
+mdf = 30
+spd = 20
+exp_reward = 0
+gold_reward = 0
+resistances = 16
+actions = Array[ExtResource("1_1s4kj")]([SubResource("Resource_ifxmt"), SubResource("Resource_04nj3"), SubResource("Resource_pfktr"), SubResource("Resource_0g4au"), SubResource("Resource_ttbjf")])

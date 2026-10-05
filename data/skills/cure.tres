@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="1_akksh"]
+[ext_resource type="Script" path="res://scripts/resources/skill_data.gd" id="2_ybii6"]
+
+[resource]
+script = ExtResource("2_ybii6")
+display_name = "Cure"
+description = "Restores HP to one ally."
+mp_cost = 7
+kind = 2
+element = 6
+target = 2
+usable_in_field = true

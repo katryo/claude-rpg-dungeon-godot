@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/stat_modifier.gd" id="1_twqa8"]
+[ext_resource type="Script" path="res://scripts/resources/skill_data.gd" id="2_f1ha7"]
+
+[resource]
+script = ExtResource("2_f1ha7")
+display_name = "Blizzara"
+description = "Encases one foe in a storm of ice."
+mp_cost = 6
+kind = 1
+element = 2
+power = 1.5

@@ -1,0 +1,153 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/field/save_crystal.gd" id="1_ynb0s"]
+[ext_resource type="Material" path="res://resources/materials/brick_wall.tres" id="2_2rq5p"]
+[ext_resource type="Material" path="res://resources/materials/crystal.tres" id="3_8mrac"]
+[ext_resource type="PackedScene" path="res://scenes/props/dust.tscn" id="4_60e7l"]
+[ext_resource type="Material" path="res://resources/materials/dust_particle.tres" id="5_ijrpo"]
+[ext_resource type="Script" path="res://scripts/common/dust.gd" id="6_37okp"]
+[ext_resource type="Script" path="res://scripts/common/interactable.gd" id="7_am0an"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_oi5jb"]
+radius = 0.6
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_km316"]
+bottom_radius = 0.7
+height = 0.3
+radial_segments = 16
+
+[sub_resource type="SphereMesh" id="SphereMesh_mad5w"]
+radius = 0.45
+height = 1.4
+radial_segments = 6
+rings = 2
+
+[sub_resource type="Gradient" id="Gradient_mjj4l"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_0m71p"]
+gradient = SubResource("Gradient_mjj4l")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_odevt"]
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0.3, 1, 0)
+spread = 60.0
+initial_velocity_min = 0.05
+initial_velocity_max = 0.25
+gravity = Vector3(0, 0.05, 0)
+scale_min = 0.4
+color_ramp = SubResource("GradientTexture1D_0m71p")
+
+[sub_resource type="QuadMesh" id="QuadMesh_acv1i"]
+size = Vector2(0.07, 0.07)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ujv0c"]
+radius = 1.3
+
+[sub_resource type="Animation" id="Animation_l08gc"]
+length = 7.85
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Gem:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.98125, 1.9625, 2.94375, 3.925, 4.90625, 5.8875, 6.86875, 7.85),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0.7853982, 0), Vector3(0, 1.5707964, 0), Vector3(0, 2.3561945, 0), Vector3(0, 3.1415927, 0), Vector3(0, 3.9269907, 0), Vector3(0, 4.712389, 0), Vector3(0, 5.497787, 0), Vector3(0, 6.2831855, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Gem:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.98125, 1.9625, 2.94375, 3.925, 4.90625, 5.8875, 6.86875, 7.85),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 1.4, 0), Vector3(0, 1.5109112, 0), Vector3(0, 1.3153163, 0), Vector3(0, 1.3537471, 0), Vector3(0, 1.519999, 0), Vector3(0, 1.3546304, 0), Vector3(0, 1.314642, 0), Vector3(0, 1.5105429, 0), Vector3(0, 1.4009556, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ey4ga"]
+_data = {
+&"idle": SubResource("Animation_l08gc")
+}
+
+[sub_resource type="Animation" id="Animation_175im"]
+length = 0.45
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Gem:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15, 0.45),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(1.4, 1.4, 1.4), Vector3(1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mv3s5"]
+_data = {
+&"pulse": SubResource("Animation_175im")
+}
+
+[node name="SaveCrystal" type="StaticBody3D" unique_id=1291422120]
+script = ExtResource("1_ynb0s")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1436589245]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CylinderShape3D_oi5jb")
+
+[node name="Base" type="MeshInstance3D" parent="." unique_id=2097016833]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+material_override = ExtResource("2_2rq5p")
+mesh = SubResource("CylinderMesh_km316")
+
+[node name="Gem" type="MeshInstance3D" parent="." unique_id=1671994793]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+material_override = ExtResource("3_8mrac")
+mesh = SubResource("SphereMesh_mad5w")
+
+[node name="Light" type="OmniLight3D" parent="." unique_id=253668317]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+light_color = Color(0.4, 0.85, 1, 1)
+light_energy = 2.2
+light_volumetric_fog_energy = 2.0
+omni_range = 6.0
+
+[node name="Sparkles" type="GPUParticles3D" parent="." unique_id=1121255567 instance=ExtResource("4_60e7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+material_override = ExtResource("5_ijrpo")
+amount = 24
+lifetime = 7.0
+preprocess = 7.0
+process_material = SubResource("ParticleProcessMaterial_odevt")
+draw_pass_1 = SubResource("QuadMesh_acv1i")
+script = ExtResource("6_37okp")
+extents = Vector3(0.6, 0.8, 0.6)
+color = Color(0.6, 0.95, 1, 0.9)
+
+[node name="Interactable" type="Area3D" parent="." unique_id=335088741]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+script = ExtResource("7_am0an")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Interactable" unique_id=1402322891]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("SphereShape3D_ujv0c")
+
+[node name="IdleAnimation" type="AnimationPlayer" parent="." unique_id=1924376175]
+libraries/ = SubResource("AnimationLibrary_ey4ga")
+autoplay = &"idle"
+
+[node name="PulseAnimation" type="AnimationPlayer" parent="." unique_id=962608621]
+libraries/ = SubResource("AnimationLibrary_mv3s5")

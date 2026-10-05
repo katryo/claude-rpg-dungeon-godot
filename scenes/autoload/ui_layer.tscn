@@ -1,0 +1,69 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/autoload/ui_layer.gd" id="0_root"]
+[ext_resource type="Shader" path="res://shaders/vignette.gdshader" id="1_u2cqh"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue_box.tscn" id="2_qveqe"]
+[ext_resource type="Shader" path="res://shaders/fade.gdshader" id="3_pqb0u"]
+[ext_resource type="Script" path="res://scripts/ui/dialogue_box.gd" id="4_pqb0u"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t073r"]
+shader = ExtResource("1_u2cqh")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3jff3"]
+shader = ExtResource("3_pqb0u")
+
+[node name="UI" type="Node" unique_id=471029689]
+script = ExtResource("0_root")
+
+[node name="VignetteLayer" type="CanvasLayer" parent="." unique_id=1220659068]
+unique_name_in_owner = true
+
+[node name="Vignette" type="ColorRect" parent="VignetteLayer" unique_id=1936315332]
+material = SubResource("ShaderMaterial_t073r")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="DialogueLayer" type="CanvasLayer" parent="." unique_id=1553194190]
+layer = 50
+
+[node name="DialogueBox" type="Control" parent="DialogueLayer" unique_id=965668276 instance=ExtResource("2_qveqe")]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_pqb0u")
+
+[node name="ToastLayer" type="CanvasLayer" parent="." unique_id=285025723]
+layer = 60
+
+[node name="Toast" type="PanelContainer" parent="ToastLayer" unique_id=678930819]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -260.0
+offset_top = 24.0
+offset_right = 260.0
+mouse_filter = 2
+
+[node name="ToastLabel" type="Label" parent="ToastLayer/Toast" unique_id=2038835177]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="FadeLayer" type="CanvasLayer" parent="." unique_id=1485657480]
+layer = 100
+
+[node name="FadeRect" type="ColorRect" parent="FadeLayer" unique_id=195268950]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_3jff3")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EquipmentData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="1_akf1s"]
+[ext_resource type="Resource" path="res://data/heroes/theia.tres" id="2_1mo0o"]
+[ext_resource type="Script" path="res://scripts/resources/equipment_data.gd" id="3_ycxum"]
+
+[resource]
+script = ExtResource("3_ycxum")
+display_name = "Delphic Chiton"
+description = "Ceremonial robe of the Delphic Order."
+slot = 2
+allowed_heroes = Array[ExtResource("1_akf1s")]([ExtResource("2_1mo0o")])
+def = 5
+mdf = 10

@@ -1,0 +1,55 @@
+[gd_resource type="Resource" script_class="HeroData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/learnable_skill.gd" id="1_rwtcc"]
+[ext_resource type="Resource" path="res://data/skills/flame_blade.tres" id="2_t8tdw"]
+[ext_resource type="Resource" path="res://data/skills/cure.tres" id="3_yo4kb"]
+[ext_resource type="Resource" path="res://data/skills/thunder_slash.tres" id="4_0yo4m"]
+[ext_resource type="Resource" path="res://data/skills/arcane_edge.tres" id="5_5jkpi"]
+[ext_resource type="Resource" path="res://data/skills/lumina_blade.tres" id="6_5xyqs"]
+[ext_resource type="Texture2D" path="res://assets/sprites/portraits/arlen.png" id="7_1bb23"]
+[ext_resource type="Script" path="res://scripts/resources/hero_data.gd" id="8_5ly1y"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/arlen.tres" id="9_7isdb"]
+
+[sub_resource type="Resource" id="Resource_elaqq"]
+script = ExtResource("1_rwtcc")
+skill = ExtResource("2_t8tdw")
+
+[sub_resource type="Resource" id="Resource_277v2"]
+script = ExtResource("1_rwtcc")
+skill = ExtResource("3_yo4kb")
+
+[sub_resource type="Resource" id="Resource_00x2u"]
+script = ExtResource("1_rwtcc")
+level = 5
+skill = ExtResource("4_0yo4m")
+
+[sub_resource type="Resource" id="Resource_kkx2g"]
+script = ExtResource("1_rwtcc")
+level = 7
+skill = ExtResource("5_5jkpi")
+
+[sub_resource type="Resource" id="Resource_8jabb"]
+script = ExtResource("1_rwtcc")
+level = 9
+skill = ExtResource("6_5xyqs")
+
+[resource]
+script = ExtResource("8_5ly1y")
+display_name = "Arlen"
+job = "Magic Warrior"
+bio = "A young spellblade from the border village of Eldmoor. He fuses sword and sorcery, imbuing his blade with the elements."
+sprite_frames = ExtResource("9_7isdb")
+portrait = ExtResource("7_1bb23")
+base_hp = 120
+base_mp = 30
+base_atk = 20
+base_def = 14
+base_mag = 15
+base_mdf = 12
+base_spd = 14
+growth_hp = 18.0
+growth_mp = 5.0
+growth_atk = 3.0
+growth_mag = 2.5
+growth_spd = 1.5
+learnset = Array[ExtResource("1_rwtcc")]([SubResource("Resource_elaqq"), SubResource("Resource_277v2"), SubResource("Resource_00x2u"), SubResource("Resource_kkx2g"), SubResource("Resource_8jabb")])

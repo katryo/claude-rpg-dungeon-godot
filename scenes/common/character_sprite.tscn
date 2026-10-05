@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/common/character_sprite.gd" id="1_0jryo"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/arlen.tres" id="2_msv2b"]
+[ext_resource type="Material" path="res://resources/materials/blob_shadow.tres" id="3_8gj4a"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_jxcrv"]
+size = Vector2(1, 0.45)
+
+[node name="CharacterSprite" type="Node3D" unique_id=1573082034]
+script = ExtResource("1_0jryo")
+sprite_frames = ExtResource("2_msv2b")
+
+[node name="Sprite" type="AnimatedSprite3D" parent="." unique_id=1266618379]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.015, 0)
+cast_shadow = 0
+pixel_size = 0.058
+billboard = 2
+alpha_cut = 1
+texture_filter = 0
+sprite_frames = ExtResource("2_msv2b")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="Shadow" type="MeshInstance3D" parent="." unique_id=546948260]
+transform = Transform3D(1.073, 0, 0, 0, -4.690232e-08, 1.073, 0, -1.073, -4.690232e-08, 0, 0.03, 0)
+material_override = ExtResource("3_8gj4a")
+cast_shadow = 0
+mesh = SubResource("QuadMesh_jxcrv")

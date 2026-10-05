@@ -1,0 +1,82 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/skeleton.png" id="1_oxp4w"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1hy67"]
+atlas = ExtResource("1_oxp4w")
+region = Rect2(66, 0, 33, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vdh32"]
+atlas = ExtResource("1_oxp4w")
+region = Rect2(99, 0, 33, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cs80j"]
+atlas = ExtResource("1_oxp4w")
+region = Rect2(132, 0, 33, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jlb3w"]
+atlas = ExtResource("1_oxp4w")
+region = Rect2(165, 0, 33, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tymif"]
+atlas = ExtResource("1_oxp4w")
+region = Rect2(198, 0, 33, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3qsf7"]
+atlas = ExtResource("1_oxp4w")
+region = Rect2(231, 0, 33, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jdc7p"]
+atlas = ExtResource("1_oxp4w")
+region = Rect2(0, 0, 33, 33)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_42gb3"]
+atlas = ExtResource("1_oxp4w")
+region = Rect2(33, 0, 33, 33)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1hy67")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vdh32")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cs80j")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jlb3w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tymif")
+}],
+"loop": false,
+"name": &"cast",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3qsf7")
+}],
+"loop": false,
+"name": &"hurt",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jdc7p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_42gb3")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.5
+}]

@@ -1,0 +1,136 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/party_card.gd" id="0_root"]
+[ext_resource type="Texture2D" path="res://assets/sprites/portraits/arlen.png" id="1_51765"]
+[ext_resource type="Script" path="res://scripts/ui/stat_bar.gd" id="2_5rd47"]
+
+[node name="PartyCard" type="PanelContainer" unique_id=825134885]
+custom_minimum_size = Vector2(0, 160)
+theme_type_variation = &"CardPanel"
+script = ExtResource("0_root")
+
+[node name="Row" type="HBoxContainer" parent="." unique_id=841731823]
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="Cursor" type="Label" parent="Row" unique_id=1023239029]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+vertical_alignment = 1
+
+[node name="Portrait" type="TextureRect" parent="Row" unique_id=901579824]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 108)
+layout_mode = 2
+texture = ExtResource("1_51765")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Identity" type="VBoxContainer" parent="Row" unique_id=1975072156]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="NameLabel" type="Label" parent="Row/Identity" unique_id=1669065358]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Arlen"
+
+[node name="JobLabel" type="Label" parent="Row/Identity" unique_id=1517257695]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Magic Warrior"
+
+[node name="LevelLabel" type="Label" parent="Row/Identity" unique_id=678641937]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "LV 5"
+
+[node name="KOLabel" type="Label" parent="Row/Identity" unique_id=140049428]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.45, 1)
+text = "KO"
+
+[node name="Gauges" type="VBoxContainer" parent="Row" unique_id=498208548]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="HPRow" type="HBoxContainer" parent="Row/Gauges" unique_id=1526033851]
+layout_mode = 2
+
+[node name="HPName" type="Label" parent="Row/Gauges/HPRow" unique_id=694219820]
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "HP"
+
+[node name="HPValue" type="Label" parent="Row/Gauges/HPRow" unique_id=532545847]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0 / 0"
+horizontal_alignment = 2
+
+[node name="HPBar" type="Control" parent="Row/Gauges" unique_id=2075674567]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_5rd47")
+color = Color(0.4, 0.95, 0.5, 1)
+
+[node name="MPRow" type="HBoxContainer" parent="Row/Gauges" unique_id=1480185491]
+layout_mode = 2
+
+[node name="MPName" type="Label" parent="Row/Gauges/MPRow" unique_id=571794155]
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "MP"
+
+[node name="MPValue" type="Label" parent="Row/Gauges/MPRow" unique_id=960778863]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0 / 0"
+horizontal_alignment = 2
+
+[node name="MPBar" type="Control" parent="Row/Gauges" unique_id=2103107939]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_5rd47")
+color = Color(0.45, 0.7, 1, 1)
+
+[node name="EXPRow" type="HBoxContainer" parent="Row/Gauges" unique_id=1976910481]
+layout_mode = 2
+
+[node name="EXPName" type="Label" parent="Row/Gauges/EXPRow" unique_id=623019655]
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+theme_type_variation = &"GoldLabel"
+text = "EXP"
+
+[node name="EXPValue" type="Label" parent="Row/Gauges/EXPRow" unique_id=1134893195]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0 / 0"
+horizontal_alignment = 2
+
+[node name="EXPBar" type="Control" parent="Row/Gauges" unique_id=873197820]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_5rd47")
+color = Color(1, 0.8, 0.35, 1)

@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" path="res://resources/materials/window.tres" id="1_3exs6"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_u5nja"]
+size = Vector2(1.1, 2)
+
+[node name="Window" type="MeshInstance3D" unique_id=478802810]
+material_override = ExtResource("1_3exs6")
+mesh = SubResource("QuadMesh_u5nja")

@@ -1,0 +1,41 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/field/player.gd" id="1_xxeti"]
+[ext_resource type="PackedScene" path="res://scenes/common/character_sprite.tscn" id="2_n6f2b"]
+[ext_resource type="Script" path="res://scripts/common/character_sprite.gd" id="3_wq2tq"]
+[ext_resource type="SpriteFrames" path="res://resources/sprite_frames/arlen.tres" id="4_addij"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_mdsn4"]
+height = 1.6
+radius = 0.35
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_82wko"]
+radius = 1.5
+
+[node name="Player" type="CharacterBody3D" unique_id=1672862708]
+collision_layer = 2
+motion_mode = 1
+script = ExtResource("1_xxeti")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=965425216]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+shape = SubResource("CylinderShape3D_mdsn4")
+
+[node name="Visual" type="Node3D" parent="." unique_id=1573082034 instance=ExtResource("2_n6f2b")]
+script = ExtResource("3_wq2tq")
+sprite_frames = ExtResource("4_addij")
+
+[node name="Lantern" type="OmniLight3D" parent="." unique_id=1290473727]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0.8)
+light_color = Color(1, 0.8, 0.55, 1)
+light_energy = 2.2
+shadow_enabled = true
+omni_range = 8.0
+
+[node name="InteractArea" type="Area3D" parent="." unique_id=1665210989]
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractArea" unique_id=865107828]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("SphereShape3D_82wko")
